@@ -1,0 +1,14 @@
+Header { 
+    border-bottom: 1px solid;
+    /* padding: 10px; */
+    box-shadow: 1px 1px 1px 1px #f0efef;
+}
+.space {
+    border-right: 1px solid #cccc;
+   
+}
+.sider{
+    border: 1px solid #cccc;
+
+
+}

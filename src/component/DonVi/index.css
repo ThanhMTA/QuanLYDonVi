@@ -1,0 +1,19 @@
+.Nav_DV{
+    border: 1px solid #d6d3d3cc;
+
+    box-shadow: 1px 1px 1px 1px #cccaca;
+
+
+}
+.H_dv{
+    background-color: rgb(228, 232, 238);
+}
+.DV_content{
+    border: 1px solid #d6d3d3cc;
+    box-shadow: 1px 1px 1px 1px #cccaca;
+
+}
+.flex-content{
+    /* border: 1px solid #d6d3d3cc; */
+    /* box-shadow: 1px 1px 0px 1px #cccaca; */
+}
