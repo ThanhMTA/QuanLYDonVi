@@ -1,11 +1,28 @@
-import React from "react";
-import { DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone } from '@ant-design/icons';
-import { Layout, Breadcrumb, theme, Space, Tree, Button, Flex, Input, Table, Tag } from 'antd';
-import Nav from '../Nav';
+import React, { useState } from "react";
+import {
+    DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
+    ExclamationCircleFilled
+} from '@ant-design/icons';
+import {
+    Layout, Breadcrumb, theme, Space, Tree, Button,
+    Flex, Input, Table, Modal,
+    Cascader,
+    DatePicker,
+    Form,
+    InputNumber,
+    Radio,
+    Select,
+    Switch,
+    TreeSelect,
+} from 'antd';
+
+
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 import './index.css'
+import Nav from '../Nav';
 // import './index.css'
 const { Header, Content, Sider } = Layout;
+const { confirm } = Modal;
 const { Search } = Input;
 const treeData = [
     {
@@ -136,42 +153,7 @@ const treeData = [
 ];
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
-const columns = [
-    {
-        title: 'Đơn vị',
-        dataIndex: 'name',
-        key: 'name',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Quân số',
-        dataIndex: 'quanso',
-        key: 'quanso',
-    },
-    {
-        title: 'Địa chỉ  ',
-        dataIndex: 'address',
-        key: 'address',
-    },
-    {
-        title: 'Loại ',
-        dataIndex: 'type',
-        key: 'type',
-    },
 
-    {
-        title: 'Hành động',
-        key: 'action',
-        render: (_, record) => (
-            <Space size="middle">
-                <EditTwoTone />
-                <DeleteTwoTone />
-                <EyeTwoTone />
-             
-            </Space>
-        ),
-    },
-];
 const data = [
     {
         key: '1',
@@ -197,6 +179,91 @@ const data = [
 ];
 
 const DonVi = () => {
+    // delete
+    const showDeleteConfirm = () => {
+        confirm({
+            title: 'Are you sure delete this task?',
+            icon: <ExclamationCircleFilled />,
+            content: 'Some descriptions',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                console.log('OK');
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    };
+    // add 
+    const columns = [
+        {
+            title: 'STT',
+            dataIndex: 'stt',
+            key: 'stt',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Đơn vị',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Số hiệu',
+            dataIndex: 'sohieu',
+            key: 'sohieu',
+            render: (text) => <a>{text}</a>,
+        },
+
+        {
+            title: 'Địa chỉ  ',
+            dataIndex: 'address',
+            key: 'address',
+        },
+        {
+            title: 'Loại ',
+            dataIndex: 'type',
+            key: 'type',
+        },
+
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle">
+
+                    <a ><EditTwoTone onClick={showModal} /></a>
+                    <DeleteTwoTone onClick={showDeleteConfirm} />
+                    <a><EyeTwoTone onClick={showModal} /></a>
+
+                </Space>
+            ),
+        },
+    ];
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+    const showModal = () => {
+        setOpen(true);
+    };
+    const handleOk = () => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setOpen(false);
+        }, 3000);
+    };
+    const handleCancel = () => {
+        setOpen(false);
+    };
+    // from 
+    const [componentSize, setComponentSize] = useState('default');
+    const onFormLayoutChange = ({ size }) => {
+        setComponentSize(size);
+    };
+    //
+    // end add 
 
     const {
         token: { colorBgContainer },
@@ -293,7 +360,7 @@ const DonVi = () => {
                                     <Space size={25}
 
                                     >
-                                        <Button type="primary" size='middle'>
+                                        <Button type="primary" size='middle' onClick={showModal}>
                                             <PlusOutlined />
                                         </Button>
 
@@ -333,6 +400,78 @@ const DonVi = () => {
                 </Layout>
 
             </Layout>
+            {/*  them moi  */}
+            <Modal
+                open={open}
+                title="Thêm đơn vị "
+                onOk={handleOk}
+                onCancel={handleCancel}
+                footer={[
+                    <Button key="huy" onClick={handleCancel}>
+                        Hủy
+                    </Button>,
+                    <Button key="them" type="primary" >
+                        Thêm
+                    </Button>,
+
+                ]}
+            >
+                <Form
+                    labelCol={{
+                        span: 4,
+                    }}
+                    wrapperCol={{
+                        span: 14,
+                    }}
+                    layout="horizontal"
+                    initialValues={{
+                        size: componentSize,
+                    }}
+                    onValuesChange={onFormLayoutChange}
+                    size={componentSize}
+                    style={{
+                        maxWidth: 600,
+                        width: 800
+                    }}
+                >
+                    <Form.Item label="Cấp trên">
+                        <TreeSelect
+                            treeData={[
+                                {
+                                    title: 'Light',
+                                    value: 'light',
+                                    children: [
+                                        {
+                                            title: 'Bamboo',
+                                            value: 'bamboo',
+                                        },
+                                    ],
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                    <Form.Item label="Loại " >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Tên đơn vị ">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Số hiệu ">
+                        <Input />
+                    </Form.Item>
+
+
+                    <Form.Item label="Địa chỉ ">
+                        <Input />
+                    </Form.Item>
+
+
+                    <Form.Item label="SĐT">
+                        <Input />
+                    </Form.Item>
+
+                </Form>
+            </Modal>
 
 
 
