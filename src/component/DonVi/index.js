@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
     DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
-    ExclamationCircleFilled
+    ExclamationCircleFilled,
+    SearchOutlined,
+
 } from '@ant-design/icons';
 import {
     Layout, Breadcrumb, theme, Space, Tree, Button,
@@ -26,7 +28,7 @@ const { confirm } = Modal;
 const { Search } = Input;
 
 
-const onSearch = (value, _e, info) => console.log(info?.source, value);
+// const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 
 
@@ -34,6 +36,8 @@ const onSearch = (value, _e, info) => console.log(info?.source, value);
 const DonVi = () => {
 
     const [donViData, setDonViData] = useState([]);
+    const [donViDatas, setDonViDatas] = useState([]);
+
     const [loaiDonViData, setLoaiDonViData] = useState([]);
 
     // const [treeData, setTreeData] = useState([]);
@@ -65,6 +69,7 @@ const DonVi = () => {
             console.error('There was a problem fetching the data: ', error);
         }
     };
+
     const fetchLoaiDonViData = async () => {
         try {
             const response = await fetch('https://localhost:44319/api/LoaiDonVi');
@@ -220,16 +225,28 @@ const DonVi = () => {
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const onSelect = (selectedKeys, info) => {
-        console.log('selected', selectedKeys, info);
-    };
-    // tree cap bac 
-    function getItem(title, key, children) {
-        return {
-            title, key, children
 
-        };
-    }
+    const onSelect = (selectedKeys, info) => {
+        const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
+
+        // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
+        fetch(`https://localhost:44319/api/DonVi/${selectedKeys}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setDonViDatas(data); // Cập nhật state với thông tin đơn vị con từ API
+                const infoText = info ? info.node.title : 'Không có thông tin';
+                const h3Element = document.querySelector('h3'); // Lấy thẻ h3
+                if (h3Element) {
+                    h3Element.textContent = ` ${infoText}`; // Hiển thị thông tin từ info trong thẻ h3
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+                // Xử lý lỗi nếu cần thiết
+            });
+
+    };
+
 
     // const treeData = [
     //     {
@@ -391,7 +408,57 @@ const DonVi = () => {
                     }))
 
         }));
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
 
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        setSearchText(selectedKeys[0]);
+        setSearchedColumn(dataIndex);
+    };
+
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        setSearchText('');
+    };
+
+    const getColumnSearchProps = (dataIndex, columnTitle) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    placeholder={`Tìm kiếm ${columnTitle}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <button onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}>Tìm kiếm</button>
+                    <button onClick={() => handleReset(clearFilters)}>Đặt lại</button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <SearchOutlined
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text.toString()}
+                />
+            ) : (
+                text
+            ),
+    });
+    const onSearch = (value) => {
+        setSearchText(value.toLowerCase());
+        setSearchedColumn('');
+    };
     return (
         <>
             <Nav />
@@ -465,6 +532,7 @@ const DonVi = () => {
 
                                 // display: 'flex',
                             }}>
+
                             <Layout
                                 style={{
 
@@ -481,6 +549,7 @@ const DonVi = () => {
                                         <h3> Quản lý đơn vị </h3>
                                     </space>
 
+
                                     <Space size={25}
 
                                     >
@@ -494,7 +563,7 @@ const DonVi = () => {
 
                                 </Flex>
                             </Layout>
-                            <Search placeholder="input search text" onSearch={onSearch} enterButton />
+                            {/* <Search placeholder="input search text" onSearch={onSearch} enterButton /> */}
                             {/* <Search
                                 placeholder="input search text"
                                 allowClear
@@ -513,7 +582,7 @@ const DonVi = () => {
                                 })
                             } */}
                             <Table
-                                dataSource={donViData.map((dv, index) => ({
+                                dataSource={donViDatas.map((dv, index) => ({
                                     id: dv.id,
                                     ten: dv.ten,
                                     sdt: dv.sdt,
@@ -527,35 +596,48 @@ const DonVi = () => {
                                         title: 'STT',
                                         dataIndex: 'id',
                                         key: 'id',
+                                        ...getColumnSearchProps('id', 'STT'),
                                         render: (text) => <a>{text}</a>,
                                     },
                                     {
                                         title: 'Đơn vị',
                                         dataIndex: 'ten',
                                         key: 'ten',
+                                        ...getColumnSearchProps('ten', 'Đơn vị'),
                                         render: (text) => <a>{text}</a>,
                                     },
                                     {
                                         title: 'SDT',
                                         dataIndex: 'sdt',
                                         key: 'sdt',
-                                        render: (text) => <a>{text}</a>,
+                                        ...getColumnSearchProps('sdt', 'SDT'),
+
                                     },
 
                                     {
                                         title: 'Địa chỉ  ',
                                         dataIndex: 'address',
+
                                         key: 'address',
+                                        ...getColumnSearchProps('address', 'Địa chỉ'),
+                                        render: (text) => <p>{text}</p>,
                                     },
                                     {
                                         title: 'Cấp trên   ',
                                         dataIndex: 'captren',
+
                                         key: 'capTren',
+                                        ...getColumnSearchProps('captren', 'Cấp trên'),
+                                        render: (text) => <p>{text}</p>,
                                     },
                                     {
                                         title: 'Loại ',
                                         dataIndex: 'loai',
+
                                         key: 'loai',
+                                        ...getColumnSearchProps('loai', 'Loại '),
+                                        render: (text) => <p>{text}</p>,
+
                                     },
 
                                     {
