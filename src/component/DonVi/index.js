@@ -455,9 +455,17 @@ const DonVi = () => {
                 text
             ),
     });
-    const onSearch = (value) => {
-        setSearchText(value.toLowerCase());
-        setSearchedColumn('');
+    const onSearch = (searchText) => {
+        // Gọi API với từ khoá tìm kiếm searchText
+        fetch(`https://localhost:44319/api/DonVi/search/${encodeURIComponent(searchText)}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // Cập nhật state loaiDonViData với kết quả trả về từ API
+                setDonViDatas(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
     };
     return (
         <>
@@ -563,7 +571,7 @@ const DonVi = () => {
 
                                 </Flex>
                             </Layout>
-                            {/* <Search placeholder="input search text" onSearch={onSearch} enterButton /> */}
+                            <Search placeholder="input search text" onSearch={onSearch} enterButton />
                             {/* <Search
                                 placeholder="input search text"
                                 allowClear
@@ -597,7 +605,7 @@ const DonVi = () => {
                                         dataIndex: 'id',
                                         key: 'id',
                                         ...getColumnSearchProps('id', 'STT'),
-                                        render: (text) => <a>{text}</a>,
+                                        render: (text) => <p> {text}</p>,
                                     },
                                     {
                                         title: 'Đơn vị',
@@ -611,6 +619,8 @@ const DonVi = () => {
                                         dataIndex: 'sdt',
                                         key: 'sdt',
                                         ...getColumnSearchProps('sdt', 'SDT'),
+                                        render: (text) => <p>{text}</p>,
+
 
                                     },
 
@@ -659,13 +669,6 @@ const DonVi = () => {
 
                         </Content>
                     </Layout>
-
-
-
-
-
-
-
                 </Layout>
 
             </Layout>

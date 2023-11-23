@@ -29,7 +29,9 @@ const items = [
     getItem('Home', '/home', 'sub1', <HomeFilled />),
     getItem('Đơn vị ', '/donvi', 'sub2', <DesktopOutlined />, [
         getItem('Đơn vị ', '/donvi', '1'),
-        getItem('Thống kê ', '/thongke_donvi', '2'),
+        getItem('Loại đơn vị ', '/loaidonvi', '2'),
+        getItem('Cán bộ ', '/canbo', '3'),
+
 
     ]
     ),
@@ -180,18 +182,37 @@ const Nav = () => {
                         defaultOpenKeys={['sub1']}
                         style={{ height: '100%', borderRight: 0 }}
                     >
-                        {items.map((item) => (
-
-
-
-                            <Menu.Item key={item.key}>
-                                <Link to={item.link}>
-                                    {item.icon}
-                                    <span>{item.label}</span>
-                                </Link>
-                            </Menu.Item>
-                        ))}
+                        {items.map((item) =>
+                            item.children ? (
+                                <Menu.SubMenu
+                                    key={item.key}
+                                    title={
+                                        <span>
+                                            {item.icon}
+                                            <span>{item.label}</span>
+                                        </span>
+                                    }
+                                >
+                                    {item.children.map((subItem) => (
+                                        <Menu.Item key={subItem.key}>
+                                            <Link to={subItem.link}>
+                                                {subItem.icon}
+                                                <span>{subItem.label}</span>
+                                            </Link>
+                                        </Menu.Item>
+                                    ))}
+                                </Menu.SubMenu>
+                            ) : (
+                                <Menu.Item key={item.key}>
+                                    <Link to={item.link}>
+                                        {item.icon}
+                                        <span>{item.label}</span>
+                                    </Link>
+                                </Menu.Item>
+                            )
+                        )}
                     </Menu>
+
 
 
                 </Sider>
