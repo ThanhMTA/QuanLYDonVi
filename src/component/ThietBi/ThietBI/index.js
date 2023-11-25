@@ -20,8 +20,8 @@ import {
 
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
-import './index.css'
-import Nav from '../Nav';
+import Nav from '../../Nav';
+
 // import './index.css'
 const { Header, Content, Sider } = Layout;
 const { confirm } = Modal;
@@ -33,7 +33,7 @@ const { Search } = Input;
 
 
 
-const DonVi = () => {
+const ThietBi = () => {
 
     const [donViData, setDonViData] = useState([]);
     const [donViDatas, setDonViDatas] = useState([]);
@@ -741,4 +741,4 @@ const DonVi = () => {
     )
 
 }
-export default DonVi;
+export default ThietBi;

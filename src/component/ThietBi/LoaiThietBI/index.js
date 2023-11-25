@@ -20,8 +20,8 @@ import {
 
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
-import './index.css'
-import Nav from '../Nav';
+
+import Nav from '../../Nav';
 // import './index.css'
 const { Header, Content, Sider } = Layout;
 const { confirm } = Modal;
@@ -33,7 +33,7 @@ const { Search } = Input;
 
 
 
-const LoaiDonVi = () => {
+const LoaiThietBi = () => {
 
     const [donViData, setDonViData] = useState([]);
     const [donViDatas, setDonViDatas] = useState([]);
@@ -360,7 +360,7 @@ const LoaiDonVi = () => {
                         <Flex justify='space-between' align='center' className="flex-content">
 
                             <space>
-                                <h3> Quản lý nhóm đơn vị </h3>
+                                <h3> Quản lý loại thiết bị </h3>
                             </space>
 
 
@@ -407,7 +407,7 @@ const LoaiDonVi = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'Loại đơn vị',
+                                title: 'Loại thiết bị',
                                 dataIndex: 'tenNhom',
                                 key: 'tenNhom',
                                 ...getColumnSearchProps('ten', 'Đơn vị'),
@@ -566,4 +566,4 @@ const LoaiDonVi = () => {
     )
 
 }
-export default LoaiDonVi;
+export default LoaiThietBi;

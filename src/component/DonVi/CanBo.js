@@ -33,7 +33,7 @@ const { Search } = Input;
 
 
 
-const DonVi = () => {
+const CanBo = () => {
 
     const [donViData, setDonViData] = useState([]);
     const [donViDatas, setDonViDatas] = useState([]);
@@ -247,134 +247,7 @@ const DonVi = () => {
 
     };
 
-
-    // const treeData = [
-    //     {
-    //         title: 'Quản lý học viên',
-    //         key: '0-0',
-    //         children: [
-    //             {
-    //                 title: 'd1',
-    //                 key: '0-0-0',
-    //                 children: [
-    //                     {
-    //                         title: 'c155',
-    //                         key: '0-0-0-0',
-    //                         children: [
-    //                             {
-    //                                 title: 'cntt2',
-    //                                 key: '0-0-0-0-0',
-    //                             },
-    //                             {
-    //                                 title: 'anhttt',
-    //                                 key: '0-0-0-0-1',
-    //                             },
-    //                         ]
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-0-1',
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-0-2',
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 title: 'parent 1-1',
-    //                 key: '0-0-1',
-    //                 children: [
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-1-0',
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 title: 'parent 1-2',
-    //                 key: '0-0-2',
-    //                 children: [
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-2-0',
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-2-1',
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         title: 'QL học viên sau đại học',
-    //         key: '0-1',
-    //         children: [
-    //             {
-    //                 title: 'd1',
-    //                 key: '0-0-0',
-    //                 children: [
-    //                     {
-    //                         title: 'c155',
-    //                         key: '0-0-0-0',
-    //                         children: [
-    //                             {
-    //                                 title: 'cntt2',
-    //                                 key: '0-0-0-0-0',
-    //                             },
-    //                             {
-    //                                 title: 'anhttt',
-    //                                 key: '0-0-0-0-1',
-    //                             },
-    //                         ]
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-0-1',
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-0-2',
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 title: 'parent 1-1',
-    //                 key: '0-0-1',
-    //                 children: [
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-1-0',
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 title: 'parent 1-2',
-    //                 key: '0-0-2',
-    //                 children: [
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-2-0',
-    //                     },
-    //                     {
-    //                         title: 'leaf',
-    //                         key: '0-0-2-1',
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         title: 'Văn Phòng ',
-    //         key: '0-2',
-    //     },
-    //     {
-    //         title: 'Khoa_viện',
-    //         key: '0-3',
-    //     }
-
-    // ];
+    //   lay don vi theo cha con 
     const treeData = donViData
         .filter(dv => dv.capTren === null)
         .map(dv => ({
@@ -741,4 +614,4 @@ const DonVi = () => {
     )
 
 }
-export default DonVi;
+export default CanBo;

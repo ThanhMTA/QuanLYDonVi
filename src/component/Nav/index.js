@@ -29,7 +29,7 @@ const items = [
     getItem('Home', '/home', 'sub1', <HomeFilled />),
     getItem('Đơn vị ', '/donvi', 'sub2', <DesktopOutlined />, [
         getItem('Đơn vị ', '/donvi', '1'),
-        getItem('Loại đơn vị ', '/loaidonvi', '2'),
+        getItem('Nhóm đơn vị ', '/loaidonvi', '2'),
         getItem('Cán bộ ', '/canbo', '3'),
 
 
@@ -37,10 +37,10 @@ const items = [
     ),
     getItem('Học viên ', '/hocvien', 'sub3', <ContactsOutlined />),
     getItem('Trang thiết bị', null, 'sub4', <ToolOutlined />, [
-        getItem('Option 5', '/home', '5'),
-        getItem('Option 6', '/home', '6'),
-        getItem('Option 7', '/home', '7'),
-        getItem('Option 8', '/home', '8'),
+        getItem('Nhóm thiết bị ', '/nhom_thiet_bi', '5'),
+        getItem('Loại thiết bị', '/loai_thiet_bi', '6'),
+        getItem('Thiết bị', '/thiet_bi', '7'),
+        getItem('Cấp phát', '/cap_phat', '8'),
     ]),
     getItem('Kế hoạch huấn luyện', null, 'sub5', <SnippetsOutlined />, [
         getItem('Option 9', '/home', '9'),
@@ -89,8 +89,8 @@ const Nav = () => {
                         width: '100%',
                         display: 'flex',
                         alignItems: 'center',
-                        backgroundColor: colorBgContainer,
-                        // backgroundColor: 'blue',
+                        // backgroundColor: colorBgContainer,
+                        backgroundColor: 'rgb(66 104 157)',
 
                         borderBottom: 1,
                         borderBottomColor: 'black'
@@ -157,7 +157,11 @@ const Nav = () => {
             </Layout>
 
             {/* end header */}
-            <Layout>
+            <Layout
+                style={{
+                    // backgroundColor: '#d0dbef',
+                }}
+            >
                 {/* start nav */}
                 <Sider className='sider'
                     width={240}
@@ -169,6 +173,10 @@ const Nav = () => {
                         top: 64,
                         bottom: 0,
                         background: colorBgContainer,
+                        // backgroundColor: '#d0dbef',
+
+
+
 
                         // display: 'flex',
                         // alignItems: 'center',
@@ -180,11 +188,15 @@ const Nav = () => {
                         mode="inline"
                         defaultSelectedKeys={['1']}
                         defaultOpenKeys={['sub1']}
-                        style={{ height: '100%', borderRight: 0 }}
+                        style={{
+                            height: '100%', borderRight: 0,
+                            backgroundColor: '#d0dbef',
+
+                        }}
                     >
                         {items.map((item) =>
                             item.children ? (
-                                <Menu.SubMenu
+                                <Menu.SubMenu style={{ fontSize: '16px', fontWeight: 'bold' }}
                                     key={item.key}
                                     title={
                                         <span>
@@ -194,7 +206,7 @@ const Nav = () => {
                                     }
                                 >
                                     {item.children.map((subItem) => (
-                                        <Menu.Item key={subItem.key}>
+                                        <Menu.Item key={subItem.key} style={{ fontSize: '16px', fontWeight: 'bold' }}>
                                             <Link to={subItem.link}>
                                                 {subItem.icon}
                                                 <span>{subItem.label}</span>
@@ -203,7 +215,7 @@ const Nav = () => {
                                     ))}
                                 </Menu.SubMenu>
                             ) : (
-                                <Menu.Item key={item.key}>
+                                <Menu.Item key={item.key} style={{ fontSize: '16px', fontWeight: 'bold' }}>
                                     <Link to={item.link}>
                                         {item.icon}
                                         <span>{item.label}</span>
