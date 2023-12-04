@@ -120,7 +120,7 @@ const Nav = () => {
                                 }
                             }
                         >MTA</span>
-                        <h1 className='space' style={{ width: 70, height: 40 }}></h1>
+                        <h1 className='space' style={{ width: 30, height: 40 }}></h1>
                     </Space>
                     {/* tk  */}
                     <Space
@@ -164,7 +164,7 @@ const Nav = () => {
             >
                 {/* start nav */}
                 <Sider className='sider'
-                    width={240}
+                    width={200}
                     style={{
                         overflow: 'auto',
                         height: '90vh',

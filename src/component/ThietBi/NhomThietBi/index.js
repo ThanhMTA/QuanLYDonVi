@@ -16,6 +16,7 @@ import {
     Select,
     Switch,
     TreeSelect,
+    Col, Row
 } from 'antd';
 
 
@@ -313,7 +314,7 @@ const NhomThietBi = () => {
 
 
                     // background: colorBgContainer,
-                    padding: '0 20px 24px 260px',
+                    padding: '0 20px 24px 220px',
 
                 }}
             >
@@ -382,53 +383,249 @@ const NhomThietBi = () => {
                             paddingBottom: 11,
                         }}
                     />
+                    <Flex justify='space-between' align='center' className="flex-content">
+                        <Table
+                            dataSource={loaiDonViData.map((dv, index) => ({
+                                id: dv.id,
+                                stt: index + 1,
+                                tenNhom: dv.tenNhom,
+                                // Join tags if it's an array
+                            }))}
+                            columns={[
+                                {
+                                    title: 'STT',
+                                    dataIndex: 'stt',
+                                    key: 'stt',
+                                    ...getColumnSearchProps('id', 'STT'),
+                                    render: (text) => <p>{text}</p>,
+                                },
+                                {
+                                    title: 'ID',
+                                    dataIndex: 'id',
+                                    key: 'id',
+                                    ...getColumnSearchProps('id', 'STT'),
+                                    render: (text) => <p>{text}</p>,
+                                },
+                                {
+                                    title: 'Loại đơn vị',
+                                    dataIndex: 'tenNhom',
+                                    key: 'tenNhom',
+                                    ...getColumnSearchProps('ten', 'Đơn vị'),
+                                    render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                },
 
+                                {
+                                    title: 'Hành động',
+                                    key: 'action',
+                                    render: (_, record) => (
+                                        <Space size="middle">
+                                            <a onClick={() => showEditModal(record)}>
+                                                <EditTwoTone />
+                                            </a>
+                                            <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
 
-                    <Table
-                        dataSource={loaiDonViData.map((dv, index) => ({
-                            id: dv.id,
-                            stt: index + 1,
-                            tenNhom: dv.tenNhom,
-                            // Join tags if it's an array
-                        }))}
-                        columns={[
-                            {
-                                title: 'STT',
-                                dataIndex: 'stt',
-                                key: 'stt',
-                                ...getColumnSearchProps('id', 'STT'),
-                                render: (text) => <p>{text}</p>,
-                            },
-                            {
-                                title: 'ID',
-                                dataIndex: 'id',
-                                key: 'id',
-                                ...getColumnSearchProps('id', 'STT'),
-                                render: (text) => <p>{text}</p>,
-                            },
-                            {
-                                title: 'Loại đơn vị',
-                                dataIndex: 'tenNhom',
-                                key: 'tenNhom',
-                                ...getColumnSearchProps('ten', 'Đơn vị'),
-                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
-                            },
+                                        </Space>
+                                    ),
+                                },
+                            ]}
+                        />
+                        <Table
+                            dataSource={loaiDonViData.map((dv, index) => ({
+                                id: dv.id,
+                                stt: index + 1,
+                                tenNhom: dv.tenNhom,
+                                // Join tags if it's an array
+                            }))}
+                            columns={[
+                                {
+                                    title: 'STT',
+                                    dataIndex: 'stt',
+                                    key: 'stt',
+                                    ...getColumnSearchProps('id', 'STT'),
+                                    render: (text) => <p>{text}</p>,
+                                },
+                                {
+                                    title: 'ID',
+                                    dataIndex: 'id',
+                                    key: 'id',
+                                    ...getColumnSearchProps('id', 'STT'),
+                                    render: (text) => <p>{text}</p>,
+                                },
+                                {
+                                    title: 'Loại đơn vị',
+                                    dataIndex: 'tenNhom',
+                                    key: 'tenNhom',
+                                    ...getColumnSearchProps('ten', 'Đơn vị'),
+                                    render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                },
 
-                            {
-                                title: 'Hành động',
-                                key: 'action',
-                                render: (_, record) => (
-                                    <Space size="middle">
-                                        <a onClick={() => showEditModal(record)}>
-                                            <EditTwoTone />
-                                        </a>
-                                        <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+                                {
+                                    title: 'Hành động',
+                                    key: 'action',
+                                    render: (_, record) => (
+                                        <Space size="middle">
+                                            <a onClick={() => showEditModal(record)}>
+                                                <EditTwoTone />
+                                            </a>
+                                            <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
 
-                                    </Space>
-                                ),
-                            },
-                        ]}
-                    />
+                                        </Space>
+                                    ),
+                                },
+                            ]}
+                        />
+                        <space>
+                            <h3> Quản lý nhóm đơn vị </h3>
+                            <Table
+                                dataSource={loaiDonViData.map((dv, index) => ({
+                                    id: dv.id,
+                                    stt: index + 1,
+                                    tenNhom: dv.tenNhom,
+                                    // Join tags if it's an array
+                                }))}
+                                columns={[
+                                    {
+                                        title: 'STT',
+                                        dataIndex: 'stt',
+                                        key: 'stt',
+                                        ...getColumnSearchProps('id', 'STT'),
+                                        render: (text) => <p>{text}</p>,
+                                    },
+                                    {
+                                        title: 'ID',
+                                        dataIndex: 'id',
+                                        key: 'id',
+                                        ...getColumnSearchProps('id', 'STT'),
+                                        render: (text) => <p>{text}</p>,
+                                    },
+                                    {
+                                        title: 'Loại đơn vị',
+                                        dataIndex: 'tenNhom',
+                                        key: 'tenNhom',
+                                        ...getColumnSearchProps('ten', 'Đơn vị'),
+                                        render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                    },
+
+                                    {
+                                        title: 'Hành động',
+                                        key: 'action',
+                                        render: (_, record) => (
+                                            <Space size="middle">
+                                                <a onClick={() => showEditModal(record)}>
+                                                    <EditTwoTone />
+                                                </a>
+                                                <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+
+                                            </Space>
+                                        ),
+                                    },
+                                ]}
+                            />
+                        </space>
+
+                    </Flex>
+                    <Row>
+                        <Col span={18} push={6}>
+                            <Space>
+                                <Table
+                                    dataSource={loaiDonViData.map((dv, index) => ({
+                                        id: dv.id,
+                                        stt: index + 1,
+                                        tenNhom: dv.tenNhom,
+                                        // Join tags if it's an array
+                                    }))}
+                                    columns={[
+                                        {
+                                            title: 'STT',
+                                            dataIndex: 'stt',
+                                            key: 'stt',
+                                            ...getColumnSearchProps('id', 'STT'),
+                                            render: (text) => <p>{text}</p>,
+                                        },
+                                        {
+                                            title: 'ID',
+                                            dataIndex: 'id',
+                                            key: 'id',
+                                            ...getColumnSearchProps('id', 'STT'),
+                                            render: (text) => <p>{text}</p>,
+                                        },
+                                        {
+                                            title: 'Loại đơn vị',
+                                            dataIndex: 'tenNhom',
+                                            key: 'tenNhom',
+                                            ...getColumnSearchProps('ten', 'Đơn vị'),
+                                            render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                        },
+
+                                        {
+                                            title: 'Hành động',
+                                            key: 'action',
+                                            render: (_, record) => (
+                                                <Space size="middle">
+                                                    <a onClick={() => showEditModal(record)}>
+                                                        <EditTwoTone />
+                                                    </a>
+                                                    <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+
+                                                </Space>
+                                            ),
+                                        },
+                                    ]}
+                                />
+                            </Space>
+                        </Col>
+                        <Col span={6} pull={18}>
+                            <Space>
+                                <Table
+                                    dataSource={loaiDonViData.map((dv, index) => ({
+                                        id: dv.id,
+                                        stt: index + 1,
+                                        tenNhom: dv.tenNhom,
+                                        // Join tags if it's an array
+                                    }))}
+                                    columns={[
+                                        {
+                                            title: 'STT',
+                                            dataIndex: 'stt',
+                                            key: 'stt',
+                                            ...getColumnSearchProps('id', 'STT'),
+                                            render: (text) => <p>{text}</p>,
+                                        },
+                                        {
+                                            title: 'ID',
+                                            dataIndex: 'id',
+                                            key: 'id',
+                                            ...getColumnSearchProps('id', 'STT'),
+                                            render: (text) => <p>{text}</p>,
+                                        },
+                                        {
+                                            title: 'Loại đơn vị',
+                                            dataIndex: 'tenNhom',
+                                            key: 'tenNhom',
+                                            ...getColumnSearchProps('ten', 'Đơn vị'),
+                                            render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                        },
+
+                                        {
+                                            title: 'Hành động',
+                                            key: 'action',
+                                            render: (_, record) => (
+                                                <Space size="middle">
+                                                    <a onClick={() => showEditModal(record)}>
+                                                        <EditTwoTone />
+                                                    </a>
+                                                    <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+
+                                                </Space>
+                                            ),
+                                        },
+                                    ]}
+                                />
+                            </Space>
+
+                        </Col>
+                    </Row>
+
 
 
                 </Content>

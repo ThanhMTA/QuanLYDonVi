@@ -313,7 +313,7 @@ const LoaiThietBi = () => {
 
 
                     // background: colorBgContainer,
-                    padding: '0 20px 24px 260px',
+                    padding: '0 20px 24px 220px',
 
                 }}
             >

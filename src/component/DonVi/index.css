@@ -19,3 +19,6 @@
 }
 /* styles.css */
 
+.custom-height-table .ant-table-tbody > tr {
+    height: 50px; /* Chiều cao của hàng */
+  }

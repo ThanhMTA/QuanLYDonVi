@@ -57,7 +57,7 @@ const DonVi = () => {
 
     const fetchDonViData = async () => {
         try {
-            const response = await fetch('https://localhost:44319/api/DonVi');
+            const response = await fetch('https://localhost:44325/api/DonVi');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -72,7 +72,7 @@ const DonVi = () => {
 
     const fetchLoaiDonViData = async () => {
         try {
-            const response = await fetch('https://localhost:44319/api/LoaiDonVi');
+            const response = await fetch('https://localhost:44325/api/LoaiDonVi');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -95,7 +95,7 @@ const DonVi = () => {
 
             setLoading(true);
 
-            const response = await fetch('https://localhost:44319/api/DonVi', {
+            const response = await fetch('https://localhost:44325/api/DonVi', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ const DonVi = () => {
             // Sau khi thêm dữ liệu, bạn có thể cập nhật danh sách hoặc state tương ứng tại đây
             // Ví dụ:
             // 1. Gọi lại API để lấy dữ liệu mới
-            const updatedResponse = await fetch('https://localhost:44319/api/DonVi');
+            const updatedResponse = await fetch('https://localhost:44325/api/DonVi');
             const updatedData = await updatedResponse.json();
 
             // 2. Cập nhật state với dữ liệu mới
@@ -129,7 +129,7 @@ const DonVi = () => {
 
             setLoading(true);
 
-            const response = await fetch(`https://localhost:44319/api/DonVi/${formData.id}`, {
+            const response = await fetch(`https://localhost:44325/api/DonVi/${formData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ const DonVi = () => {
                 // Xử lý khi sửa thành công
 
                 // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44319/api/DonVi');
+                const updatedResponse = await fetch('https://localhost:44325/api/DonVi');
                 const updatedData = await updatedResponse.json();
 
                 // Cập nhật state donViData với dữ liệu mới
@@ -166,13 +166,13 @@ const DonVi = () => {
     // delete donvi 
     const handleDeleteButtonClick = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa đơn vị này?")) {
-            fetch(`https://localhost:44319/api/DonVi/${id}`, {
+            fetch(`https://localhost:44325/api/DonVi/${id}`, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
                         // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44319/api/DonVi');
+                        return fetch('https://localhost:44325/api/DonVi');
                     }
                     throw new Error('Delete request failed');
                 })
@@ -230,7 +230,7 @@ const DonVi = () => {
         const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
 
         // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
-        fetch(`https://localhost:44319/api/DonVi/${selectedKeys}`)
+        fetch(`https://localhost:44325/api/DonVi/${selectedKeys}`)
             .then((response) => response.json())
             .then((data) => {
                 setDonViDatas(data); // Cập nhật state với thông tin đơn vị con từ API
@@ -457,7 +457,7 @@ const DonVi = () => {
     });
     const onSearch = (searchText) => {
         // Gọi API với từ khoá tìm kiếm searchText
-        fetch(`https://localhost:44319/api/DonVi/search/${encodeURIComponent(searchText)}`)
+        fetch(`https://localhost:44325/api/DonVi/search/${encodeURIComponent(searchText)}`)
             .then((response) => response.json())
             .then((data) => {
                 // Cập nhật state loaiDonViData với kết quả trả về từ API
@@ -477,7 +477,7 @@ const DonVi = () => {
 
 
                     // background: colorBgContainer,
-                    padding: '0 20px 24px 260px',
+                    padding: '0 20px 24px 220px',
 
                 }}
             >
@@ -598,6 +598,8 @@ const DonVi = () => {
                                 })
                             } */}
                             <Table
+                                className="custom-height-table"
+                                size='small'
                                 dataSource={donViDatas.map((dv, index) => ({
                                     id: dv.id,
                                     stt: index + 1,

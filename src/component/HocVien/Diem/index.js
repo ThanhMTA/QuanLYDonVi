@@ -15,13 +15,14 @@ import {
     Radio,
     Select,
     Switch,
-    TreeSelect,
+    TreeSelect, Row, Col
+
 } from 'antd';
 
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
-import './index.css'
-import Nav from '../Nav';
+
+import Nav from '../../Nav';
 // import './index.css'
 const { Header, Content, Sider } = Layout;
 const { confirm } = Modal;
@@ -30,10 +31,102 @@ const { Search } = Input;
 
 // const onSearch = (value, _e, info) => console.log(info?.source, value);
 
+// form 
+const { Option } = Select;
+const AdvancedSearchForm = () => {
+    const { token } = theme.useToken();
+    const [form] = Form.useForm();
+    const [expand, setExpand] = useState(false);
+    const formStyle = {
+        maxWidth: 'none',
+        background: token.colorFillAlter,
+        borderRadius: token.borderRadiusLG,
+        padding: 24,
+    };
+    const getFields = () => {
+        const count = expand ? 10 : 6;
+        const children = [];
+        for (let i = 0; i < count; i++) {
+            children.push(
+                <Col span={8} key={i}>
+                    {i % 3 !== 1 ? (
+                        <Form.Item
+                            name={`field-${i}`}
+                            label={`Field ${i}`}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Input something!',
+                                },
+                            ]}
+                        >
+                            <Input placeholder="placeholder" />
+                        </Form.Item>
+                    ) : (
+                        <Form.Item
+                            name={`field-${i}`}
+                            label={`Field ${i}`}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Select something!',
+                                },
+                            ]}
+                            initialValue="1"
+                        >
+                            <Select>
+                                <Option value="1">
+                                    longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong
+                                </Option>
+                                <Option value="2">222</Option>
+                            </Select>
+                        </Form.Item>
+                    )}
+                </Col>,
+            );
+        }
+        return children;
+    };
+    const onFinish = (values) => {
+        console.log('Received values of form: ', values);
+    };
+    return (
+        <Form form={form} name="advanced_search" style={formStyle} onFinish={onFinish}>
+            <Row gutter={24}>{getFields()}</Row>
+            <div
+                style={{
+                    textAlign: 'right',
+                }}
+            >
+                <Space size="small">
+                    <Button type="primary" htmlType="submit">
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            form.resetFields();
+                        }}
+                    >
+                        Clear
+                    </Button>
+                    <a
+                        style={{
+                            fontSize: 12,
+                        }}
+                        onClick={() => {
+                            setExpand(!expand);
+                        }}
+                    >
+                        <DownOutlined rotate={expand ? 180 : 0} /> Collapse
+                    </a>
+                </Space>
+            </div>
+        </Form>
+    );
+};
 
 
-
-const LoaiDonVi = () => {
+const Diem = () => {
 
     const [donViData, setDonViData] = useState([]);
     const [donViDatas, setDonViDatas] = useState([]);
@@ -57,7 +150,7 @@ const LoaiDonVi = () => {
 
     const fetchDonViByLoaiDonViId = async (loaiDonViId) => {
         try {
-            const response = await fetch(`https://localhost:44325/api/DonVi/DonVi/${loaiDonViId}`);
+            const response = await fetch(`https://localhost:44319/api/DonVi/DonVi/${loaiDonViId}`);
             const data = await response.json();
             return data; // Trả về dữ liệu đơn vị từ API
         } catch (error) {
@@ -68,7 +161,7 @@ const LoaiDonVi = () => {
 
     const fetchLoaiDonViData = async () => {
         try {
-            const response = await fetch('https://localhost:44325/api/LoaiDonVi');
+            const response = await fetch('https://localhost:44319/api/LoaiDonVi');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -91,7 +184,7 @@ const LoaiDonVi = () => {
 
             setLoading(true);
 
-            const response = await fetch('https://localhost:44325/api/LoaiDonVi', {
+            const response = await fetch('https://localhost:44319/api/LoaiDonVi', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -105,7 +198,7 @@ const LoaiDonVi = () => {
             // Sau khi thêm dữ liệu, bạn có thể cập nhật danh sách hoặc state tương ứng tại đây
             // Ví dụ:
             // 1. Gọi lại API để lấy dữ liệu mới
-            const updatedResponse = await fetch('https://localhost:44325/api/LoaiDonVi');
+            const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
             const updatedData = await updatedResponse.json();
 
             // 2. Cập nhật state với dữ liệu mới
@@ -125,7 +218,7 @@ const LoaiDonVi = () => {
 
             setLoading(true);
 
-            const response = await fetch(`https://localhost:44325/api/LoaiDonVi/${formData.id}`, {
+            const response = await fetch(`https://localhost:44319/api/LoaiDonVi/${formData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -138,7 +231,7 @@ const LoaiDonVi = () => {
                 // Xử lý khi sửa thành công
 
                 // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44325/api/LoaiDonVi');
+                const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
                 const updatedData = await updatedResponse.json();
 
                 // Cập nhật state donViData với dữ liệu mới
@@ -162,13 +255,13 @@ const LoaiDonVi = () => {
     // delete donvi 
     const handleDeleteButtonClick = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa đơn vị này?")) {
-            fetch(`https://localhost:44325/api/LoaiDonVi/${id}`, {
+            fetch(`https://localhost:44319/api/LoaiDonVi/${id}`, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
                         // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44325/api/LoaiDonVi');
+                        return fetch('https://localhost:44319/api/LoaiDonVi');
                     }
                     throw new Error('Delete request failed');
                 })
@@ -293,7 +386,7 @@ const LoaiDonVi = () => {
     });
     const onSearch = (searchText) => {
         // Gọi API với từ khoá tìm kiếm searchText
-        fetch(`https://localhost:44325/api/LoaiDonVi/search/${encodeURIComponent(searchText)}`)
+        fetch(`https://localhost:44319/api/LoaiDonVi/search/${encodeURIComponent(searchText)}`)
             .then((response) => response.json())
             .then((data) => {
                 // Cập nhật state loaiDonViData với kết quả trả về từ API
@@ -303,6 +396,10 @@ const LoaiDonVi = () => {
                 console.error('Error fetching data:', error);
             });
     };
+    // form 
+    const { token } = theme.useToken();
+
+
     return (
         <>
             <Nav />
@@ -310,8 +407,6 @@ const LoaiDonVi = () => {
 
                 className="LDV_content"
                 style={{
-
-
                     // background: colorBgContainer,
                     padding: '0 20px 24px 220px',
 
@@ -346,7 +441,10 @@ const LoaiDonVi = () => {
 
                         // display: 'flex',
                     }}>
+                    <Layout>
+                        <AdvancedSearchForm />
 
+                    </Layout>
                     <Layout
                         style={{
 
@@ -360,7 +458,7 @@ const LoaiDonVi = () => {
                         <Flex justify='space-between' align='center' className="flex-content">
 
                             <space>
-                                <h3> Quản lý nhóm đơn vị </h3>
+                                <h3> Quản lý loại thiết bị </h3>
                             </space>
 
 
@@ -385,6 +483,7 @@ const LoaiDonVi = () => {
 
 
                     <Table
+                        size='small'
                         dataSource={loaiDonViData.map((dv, index) => ({
                             id: dv.id,
                             stt: index + 1,
@@ -407,7 +506,7 @@ const LoaiDonVi = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'Loại đơn vị',
+                                title: 'Loại thiết bị',
                                 dataIndex: 'tenNhom',
                                 key: 'tenNhom',
                                 ...getColumnSearchProps('ten', 'Đơn vị'),
@@ -538,13 +637,10 @@ const LoaiDonVi = () => {
                             {
                                 title: 'Loại ',
                                 dataIndex: 'loai',
-
                                 key: 'loai',
                                 render: (text) => <p>{text}</p>,
 
                             }
-
-
                         ]}
                         pagination={{
                             pageSize: 5, // Số lượng hàng trên mỗi trang
@@ -566,4 +662,4 @@ const LoaiDonVi = () => {
     )
 
 }
-export default LoaiDonVi;
+export default Diem;
