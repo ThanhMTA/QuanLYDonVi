@@ -530,7 +530,7 @@ const HocVien = () => {
                         <div style={{ textAlign: 'right' }}>
                             <Space size="small">
                                 <Button type="primary" htmlType="submit">
-                                    Search
+                                    <Link to='diem'>Search</Link>
                                 </Button>
                                 <Button
                                     onClick={() => {
@@ -753,12 +753,6 @@ const HocVien = () => {
 
                 </Form>
             </Modal >
-
-
-
-
-
-
 
         </>
     )

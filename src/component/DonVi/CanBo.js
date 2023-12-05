@@ -3,6 +3,7 @@ import {
     DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
     ExclamationCircleFilled,
     SearchOutlined,
+    FilterTwoTone
 
 } from '@ant-design/icons';
 import {
@@ -15,12 +16,13 @@ import {
     Radio,
     Select,
     Switch,
-    TreeSelect,
+    TreeSelect, Row, Col
+
 } from 'antd';
 
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
-import './index.css'
+
 import Nav from '../Nav';
 // import './index.css'
 const { Header, Content, Sider } = Layout;
@@ -30,6 +32,8 @@ const { Search } = Input;
 
 // const onSearch = (value, _e, info) => console.log(info?.source, value);
 
+// form 
+const { Option } = Select;
 
 
 
@@ -46,7 +50,7 @@ const CanBo = () => {
     // ds don vi 
     useEffect(() => {
         // Gọi API khi component được mount
-        fetchDonViData();
+        fetchDonViByLoaiDonViId();
         fetchLoaiDonViData();
     }, []);
 
@@ -55,18 +59,14 @@ const CanBo = () => {
 
 
 
-    const fetchDonViData = async () => {
+    const fetchDonViByLoaiDonViId = async (loaiDonViId) => {
         try {
-            const response = await fetch('https://localhost:44319/api/DonVi');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
+            const response = await fetch(`https://localhost:44319/api/DonVi/DonVi/${loaiDonViId}`);
             const data = await response.json();
-            setDonViData(data);
-            console.log("Fetched data: ", data); // Hiển thị toàn bộ dữ liệu từ donViData
-            console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong donViData
+            return data; // Trả về dữ liệu đơn vị từ API
         } catch (error) {
-            console.error('There was a problem fetching the data: ', error);
+            console.error('Error fetching data:', error);
+            return null;
         }
     };
 
@@ -95,7 +95,7 @@ const CanBo = () => {
 
             setLoading(true);
 
-            const response = await fetch('https://localhost:44319/api/DonVi', {
+            const response = await fetch('https://localhost:44319/api/LoaiDonVi', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -109,11 +109,11 @@ const CanBo = () => {
             // Sau khi thêm dữ liệu, bạn có thể cập nhật danh sách hoặc state tương ứng tại đây
             // Ví dụ:
             // 1. Gọi lại API để lấy dữ liệu mới
-            const updatedResponse = await fetch('https://localhost:44319/api/DonVi');
+            const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
             const updatedData = await updatedResponse.json();
 
             // 2. Cập nhật state với dữ liệu mới
-            setDonViData(updatedData);
+            setLoaiDonViData(updatedData);
 
             // Đóng Modal sau khi thêm dữ liệu
             setLoading(false);
@@ -129,7 +129,7 @@ const CanBo = () => {
 
             setLoading(true);
 
-            const response = await fetch(`https://localhost:44319/api/DonVi/${formData.id}`, {
+            const response = await fetch(`https://localhost:44319/api/LoaiDonVi/${formData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,11 +142,11 @@ const CanBo = () => {
                 // Xử lý khi sửa thành công
 
                 // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44319/api/DonVi');
+                const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
                 const updatedData = await updatedResponse.json();
 
                 // Cập nhật state donViData với dữ liệu mới
-                setDonViData(updatedData);
+                setLoaiDonViData(updatedData);
             } else {
                 console.error('Có lỗi khi cập nhật thông tin');
                 // Xử lý khi có lỗi từ phía server
@@ -166,20 +166,20 @@ const CanBo = () => {
     // delete donvi 
     const handleDeleteButtonClick = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa đơn vị này?")) {
-            fetch(`https://localhost:44319/api/DonVi/${id}`, {
+            fetch(`https://localhost:44319/api/LoaiDonVi/${id}`, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
                         // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44319/api/DonVi');
+                        return fetch('https://localhost:44319/api/LoaiDonVi');
                     }
                     throw new Error('Delete request failed');
                 })
                 .then(response => response.json())
                 .then(updatedData => {
                     // Cập nhật state donViData với danh sách mới
-                    setDonViData(updatedData);
+                    setLoaiDonViData(updatedData);
                 })
                 .catch(error => console.error('Error deleting or fetching data:', error));
         }
@@ -187,22 +187,39 @@ const CanBo = () => {
 
     // add 
     const [open, setOpen] = useState(false);
+    const [modalType, setModalType] = useState(null);
     const showModal = () => {
         form.setFieldsValue();
         setOpen(true);
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
-            loaiDV: record.loai, // Đặt giá trị của loại đơn vị từ record vào trường "loaiDV"
-            capTren: record.captren, // Đặt giá trị của cấp trên từ record vào trường "capTren"
-            diaChi: record.address, // Đặt giá trị của địa chỉ từ record vào trường "diaChi"
-            ten: record.ten, // Đặt giá trị của tên đơn vị từ record vào trường "ten"
-            sdt: record.sdt,
+            // Đặt giá trị của loại đơn vị từ record vào trường "loaiDV"
+
+            tenNhom: record.tenNhom, // Đặt giá trị của tên đơn vị từ record vào trường "ten"
+
             id: record.id
             // Đặt giá trị của SĐT từ record vào trường "sdt"
             // ... các trường khác tương tự ...
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
+    };
+
+    const showDonvi = async (record) => {
+        try {
+            const idLoaiDonVi = record.id; // Giả sử id loại đơn vị có thể lấy từ record
+            const donViInfo = await fetchDonViByLoaiDonViId(idLoaiDonVi);
+
+            if (donViInfo) {
+                setDonViData(donViInfo); // Cập nhật dữ liệu đơn vị từ API
+                setModalType('showdonvi'); // Hiển thị Modal
+            } else {
+                // Xử lý khi không lấy được dữ liệu từ API
+            }
+        } catch (error) {
+            console.error('Error fetching DonVi data:', error);
+            // Xử lý lỗi khi gọi API
+        }
     };
     const handleOk = () => {
         setLoading(true);
@@ -213,6 +230,9 @@ const CanBo = () => {
     };
     const handleCancel = () => {
         setOpen(false);
+    };
+    const handleCancel1 = () => {
+        setModalType(false);
     };
     // from 
     const [componentSize, setComponentSize] = useState('default');
@@ -226,61 +246,8 @@ const CanBo = () => {
         token: { colorBgContainer },
     } = theme.useToken();
 
-    const onSelect = (selectedKeys, info) => {
-        const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
-
-        // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
-        fetch(`https://localhost:44319/api/DonVi/${selectedKeys}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setDonViDatas(data); // Cập nhật state với thông tin đơn vị con từ API
-                const infoText = info ? info.node.title : 'Không có thông tin';
-                const h3Element = document.querySelector('h3'); // Lấy thẻ h3
-                if (h3Element) {
-                    h3Element.textContent = ` ${infoText}`; // Hiển thị thông tin từ info trong thẻ h3
-                }
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-                // Xử lý lỗi nếu cần thiết
-            });
-
-    };
-
-    //   lay don vi theo cha con 
-    const treeData = donViData
-        .filter(dv => dv.capTren === null)
-        .map(dv => ({
-            key: dv.id,
-            title: dv.ten,
-            value: dv.ten,
-            children:
-                donViData
-                    .filter(child => child.capTren === dv.ten)
-                    .map(child => ({
-                        key: child.id,
-                        title: child.ten,
-                        value: child.ten,
-                        children: donViData
-                            .filter(child2 => child2.capTren === child.ten)
-                            .map(child2 => ({
-                                key: child2.id,
-                                title: child2.ten,
-                                value: child2.ten,
-                                children: donViData
-                                    .filter(child3 => child3.capTren === child2.ten)
-                                    .map(child3 => ({
-                                        key: child3.id,
-                                        title: child3.ten,
-                                        value: child3.ten,
 
 
-                                    }))
-
-                            }))
-                    }))
-
-        }));
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
 
@@ -330,27 +297,31 @@ const CanBo = () => {
     });
     const onSearch = (searchText) => {
         // Gọi API với từ khoá tìm kiếm searchText
-        fetch(`https://localhost:44319/api/DonVi/search/${encodeURIComponent(searchText)}`)
+        fetch(`https://localhost:44319/api/LoaiDonVi/search/${encodeURIComponent(searchText)}`)
             .then((response) => response.json())
             .then((data) => {
                 // Cập nhật state loaiDonViData với kết quả trả về từ API
-                setDonViDatas(data);
+                setLoaiDonViData(data);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
     };
+    // form 
+    const { token } = theme.useToken();
+
+
     return (
         <>
             <Nav />
             <Layout
 
-                className="DV_content"
+                className="LDV_content"
                 style={{
 
 
                     // background: colorBgContainer,
-                    padding: '0 20px 24px 260px',
+                    padding: '0 20px 24px 220px',
 
                 }}
             >
@@ -368,190 +339,118 @@ const CanBo = () => {
                     <Breadcrumb.Item>App</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <Layout
-
-                >
 
 
-                    <Sider className="Nav_DV"
+
+                <Content
+                    style={{
+                        padding: 24,
+                        margin: 0,
+                        minHeight: 700,
+                        background: colorBgContainer,
+                        // padding: '0 24px 0 224px',
+                        border: 1
+
+
+                        // display: 'flex',
+                    }}>
+                    <Layout
                         style={{
-                            overflow: 'auto',
-                            height: '80vh',
-                            position: 'fixed',
 
-                            top: 118,
-                            bottom: 0,
                             background: colorBgContainer,
 
 
+
+                            // display: 'flex',
                         }}
                     >
+                        <Flex justify='space-between' align='center' className="flex-content">
 
-                        <Tree
+                            <space>
+                                <h3> Danh sách Cán bộ </h3>
+                            </space>
+                            <Space size={25}
 
-                            showLine
-                            switcherIcon={<DownOutlined />}
-                            defaultExpandedKeys={[1]}
-                            onSelect={onSelect}
-                            treeData={treeData}
-
-
-                        // Join tags if it's an array
-
-                        />
-                    </Sider>
-                    <Layout>
-
-                        <Content
-                            style={{
-                                padding: 24,
-                                margin: 0,
-                                minHeight: 700,
-                                background: colorBgContainer,
-                                padding: '0 24px 0 224px',
-                                border: 1
-
-
-                                // display: 'flex',
-                            }}>
-
-                            <Layout
-                                style={{
-
-                                    background: colorBgContainer,
-
-
-
-                                    // display: 'flex',
-                                }}
                             >
-                                <Flex justify='space-between' align='center' className="flex-content">
 
-                                    <space>
-                                        <h3> Quản lý đơn vị </h3>
-                                    </space>
+                                <Input  />
+                                <FilterTwoTone style={{ fontSize: '16px', color: '#08c' }} />
+
+                                <Button type="primary" size='middle' onClick={showModal}>
+                                    <PlusOutlined />
+                                </Button>
 
 
-                                    <Space size={25}
+                            </Space>
 
-                                    >
-                                        <Button type="primary" size='middle' onClick={showModal}>
-                                            <PlusOutlined />
-                                        </Button>
 
+                        </Flex>
+                    </Layout>
+                    <Search placeholder="input search text" onSearch={onSearch} enterButton
+                        style={{
+                            paddingBottom: 11,
+                        }}
+                    />
+
+
+                    <Table
+                        size='small'
+                        dataSource={loaiDonViData.map((dv, index) => ({
+                            id: dv.id,
+                            stt: index + 1,
+                            tenNhom: dv.tenNhom,
+                            // Join tags if it's an array
+                        }))}
+                        columns={[
+                            {
+                                title: 'STT',
+                                dataIndex: 'stt',
+                                key: 'stt',
+                                ...getColumnSearchProps('id', 'STT'),
+                                render: (text) => <p>{text}</p>,
+                            },
+                            {
+                                title: 'ID',
+                                dataIndex: 'id',
+                                key: 'id',
+                                ...getColumnSearchProps('id', 'STT'),
+                                render: (text) => <p>{text}</p>,
+                            },
+                            {
+                                title: 'Loại thiết bị',
+                                dataIndex: 'tenNhom',
+                                key: 'tenNhom',
+                                ...getColumnSearchProps('ten', 'Đơn vị'),
+                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                            },
+
+                            {
+                                title: 'Hành động',
+                                key: 'action',
+                                render: (_, record) => (
+                                    <Space size="middle">
+                                        <a onClick={() => showEditModal(record)}>
+                                            <EditTwoTone />
+                                        </a>
+                                        <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
 
                                     </Space>
+                                ),
+                            },
+                        ]}
+                    />
 
 
-                                </Flex>
-                            </Layout>
-                            <Search
-                                style={{
-                                    paddingBottom: 11,
-                                }}
-                                placeholder="input search text"
-                                onSearch={onSearch}
-                                enterButton
-                            />
-                            {/* <Search
-                                placeholder="input search text"
-                                allowClear
-                                enterButton="Search"
-                                size="large"
-                                onSearch={onSearch}
-                            /> */}
+                </Content>
 
 
 
-                            {/* start table  */}
-
-                            {/* {
-                                donViData.map((dv, index) => {
-
-                                })
-                            } */}
-                            <Table
-                                dataSource={donViDatas.map((dv, index) => ({
-                                    id: dv.id,
-                                    stt: index + 1,
-                                    ten: dv.ten,
-                                    sdt: dv.sdt,
-                                    address: dv.diaChi,
-                                    loai: dv.loaiDV,
-                                    captren: dv.capTren
-                                    // Join tags if it's an array
-                                }))}
-                                columns={[
-                                    {
-                                        title: 'STT',
-                                        dataIndex: 'stt',
-                                        key: 'stt',
-                                        ...getColumnSearchProps('id', 'STT'),
-                                        render: (text) => <p> {text}</p>,
-                                    },
-                                    {
-                                        title: 'Đơn vị',
-                                        dataIndex: 'ten',
-                                        key: 'ten',
-                                        ...getColumnSearchProps('ten', 'Đơn vị'),
-                                        render: (text) => <a>{text}</a>,
-                                    },
-                                    {
-                                        title: 'SDT',
-                                        dataIndex: 'sdt',
-                                        key: 'sdt',
-                                        ...getColumnSearchProps('sdt', 'SDT'),
-                                        render: (text) => <p>{text}</p>,
 
 
-                                    },
-
-                                    {
-                                        title: 'Địa chỉ  ',
-                                        dataIndex: 'address',
-
-                                        key: 'address',
-                                        ...getColumnSearchProps('address', 'Địa chỉ'),
-                                        render: (text) => <p>{text}</p>,
-                                    },
-                                    {
-                                        title: 'Cấp trên   ',
-                                        dataIndex: 'captren',
-
-                                        key: 'capTren',
-                                        ...getColumnSearchProps('captren', 'Cấp trên'),
-                                        render: (text) => <p>{text}</p>,
-                                    },
-                                    {
-                                        title: 'Loại ',
-                                        dataIndex: 'loai',
-
-                                        key: 'loai',
-                                        ...getColumnSearchProps('loai', 'Loại '),
-                                        render: (text) => <p>{text}</p>,
-
-                                    },
-
-                                    {
-                                        title: 'Hành động',
-                                        key: 'action',
-                                        render: (_, record) => (
-                                            <Space size="middle">
-                                                <a onClick={() => showEditModal(record)}>
-                                                    <EditTwoTone />
-                                                </a>
-                                                <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
-
-                                            </Space>
-                                        ),
-                                    },
-                                ]}
-                            />
 
 
-                        </Content>
-                    </Layout>
-                </Layout>
+
+
 
             </Layout>
             {/*  them moi  */}
@@ -577,38 +476,95 @@ const CanBo = () => {
                     <Form.Item label="ID" name="id">
                         <Input disabled />
                     </Form.Item>
-                    <Form.Item label="Cấp trên" name="capTren">
-                        <TreeSelect
-                            treeData={treeData} />
-                    </Form.Item>
-                    <Form.Item label="Loại đơn vị" name="loaiDV">
-                        <Select>
-                            {loaiDonViData.map((dv, index) => (
-                                <Select.Option key={dv.id} value={dv.tenNhom}>
-                                    {dv.tenNhom} {/* Use dv.ten or the appropriate property for option label */}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                    <Form.Item label="Tên loại đơn vị" name="tenNhom">
+                        <Input />
                     </Form.Item>
 
-                    <Form.Item label="Tên đơn vị" name="ten">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Địa chỉ" name="diaChi">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="SĐT" name="sdt">
-                        <Input />
-                    </Form.Item>
 
                 </Form>
             </Modal >
+            <Modal
+                title="Danh sách đơn vị"
+                visible={modalType === 'showdonvi'}
+
+                width={1000}
+
+                onCancel={handleCancel1}
+                footer={[
+                    <Button key="huy" onClick={handleCancel1}>
+                        Thoát
+                    </Button>,
+
+                ]}
+            >
+                <Form form={form} layout="vertical">
+                    <Table
+                        dataSource={donViData.map((dv, index) => ({
+                            id: dv.id,
+                            stt: index + 1,
+                            ten: dv.ten,
+                            sdt: dv.sdt,
+                            address: dv.diaChi,
+                            loai: dv.loaiDV,
+                            captren: dv.capTren
+                            // Join tags if it's an array
+                        }))}
+                        columns={[
+                            {
+                                title: 'STT',
+                                dataIndex: 'stt',
+                                key: 'stt',
+                                render: (text) => <p> {text}</p>,
+                            },
+                            {
+                                title: 'Đơn vị',
+                                dataIndex: 'ten',
+                                key: 'ten',
+                                render: (text) => <a>{text}</a>,
+                            },
+                            {
+                                title: 'SDT',
+                                dataIndex: 'sdt',
+                                key: 'sdt',
+                                render: (text) => <p>{text}</p>,
+
+
+                            },
+
+                            {
+                                title: 'Địa chỉ  ',
+                                dataIndex: 'address',
+
+                                key: 'address',
+                                render: (text) => <p>{text}</p>,
+                            },
+                            {
+                                title: 'Cấp trên   ',
+                                dataIndex: 'captren',
+
+                                key: 'capTren',
+                                render: (text) => <p>{text}</p>,
+                            },
+                            {
+                                title: 'Loại ',
+                                dataIndex: 'loai',
+
+                                key: 'loai',
+                                render: (text) => <p>{text}</p>,
+
+                            }
+
+
+                        ]}
+                        pagination={{
+                            pageSize: 5, // Số lượng hàng trên mỗi trang
+                        }}
+                    />
 
 
 
-
-
-
+                </Form>
+            </Modal >
 
         </>
     )

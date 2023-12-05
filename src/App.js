@@ -30,6 +30,7 @@ function App() {
             <Route path="/nhom_thiet_bi" element={<NhomThietBi />} />
             <Route path="/thiet_bi" element={<ThietBi />} />
             <Route path="/hocvien" element={<HocVien />} />
+            <Route path="/hocvien/diem" element={<Diem />}></Route>
 
 
 

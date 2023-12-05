@@ -33,97 +33,7 @@ const { Search } = Input;
 
 // form 
 const { Option } = Select;
-const AdvancedSearchForm = () => {
-    const { token } = theme.useToken();
-    const [form] = Form.useForm();
-    const [expand, setExpand] = useState(false);
-    const formStyle = {
-        maxWidth: 'none',
-        background: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        padding: 24,
-    };
-    const getFields = () => {
-        const count = expand ? 10 : 6;
-        const children = [];
-        for (let i = 0; i < count; i++) {
-            children.push(
-                <Col span={8} key={i}>
-                    {i % 3 !== 1 ? (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Input something!',
-                                },
-                            ]}
-                        >
-                            <Input placeholder="placeholder" />
-                        </Form.Item>
-                    ) : (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Select something!',
-                                },
-                            ]}
-                            initialValue="1"
-                        >
-                            <Select>
-                                <Option value="1">
-                                    longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong
-                                </Option>
-                                <Option value="2">222</Option>
-                            </Select>
-                        </Form.Item>
-                    )}
-                </Col>,
-            );
-        }
-        return children;
-    };
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-    };
-    return (
-        <Form form={form} name="advanced_search" style={formStyle} onFinish={onFinish}>
-            <Row gutter={24}>{getFields()}</Row>
-            <div
-                style={{
-                    textAlign: 'right',
-                }}
-            >
-                <Space size="small">
-                    <Button type="primary" htmlType="submit">
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            form.resetFields();
-                        }}
-                    >
-                        Clear
-                    </Button>
-                    <a
-                        style={{
-                            fontSize: 12,
-                        }}
-                        onClick={() => {
-                            setExpand(!expand);
-                        }}
-                    >
-                        <DownOutlined rotate={expand ? 180 : 0} /> Collapse
-                    </a>
-                </Space>
-            </div>
-        </Form>
-    );
-};
+
 
 
 const Diem = () => {
@@ -407,6 +317,8 @@ const Diem = () => {
 
                 className="LDV_content"
                 style={{
+
+
                     // background: colorBgContainer,
                     padding: '0 20px 24px 220px',
 
@@ -441,8 +353,120 @@ const Diem = () => {
 
                         // display: 'flex',
                     }}>
-                    <Layout>
-                        <AdvancedSearchForm />
+                    <Layout
+                        style={{
+                            padding: 24,
+
+
+                            // display: 'flex',
+                        }}
+                    >
+
+                        <Row align="middle">
+                            <Col span={8} style={{ paddingRight: ' 10px' }} >
+                                <Form
+                                    name="wrap"
+                                    labelCol={{ flex: '100px' }}
+                                    labelAlign="left"
+                                    labelWrap
+                                    wrapperCol={{ flex: 1 }}
+                                    colon={false}
+                                    style={{ maxWidth: 500 }}
+                                >
+                                    <Form.Item label="Họ Tên" name="Khoa" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+
+                                    <Form.Item label="Ngày Sinh" name="loai" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Cấp Bậc" name="loai" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="SĐT" name="loai" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+
+
+
+                                </Form>
+
+
+
+
+                            </Col>
+                            <Col span={8} style={{ padding: '0 5px' }} >
+
+                                <Form
+                                    name="wrap"
+                                    labelCol={{ flex: '100px' }}
+                                    labelAlign="left"
+                                    labelWrap
+                                    wrapperCol={{ flex: 1 }}
+                                    colon={false}
+                                    style={{ maxWidth: 500, marginTop: '0' }}
+                                >
+                                    <Form.Item label="Khóa Học" name="DonVi" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Loại Đào Tạo" name="DonVi" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Đơn vị" name="DonVi" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Địa Chỉ" name="loai" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+
+
+
+
+                                </Form>
+
+                            </Col>
+                            <Col span={8} style={{ paddingLeft: ' 10px' }}>
+
+                                <Form
+                                    name="wrap"
+                                    labelCol={{ flex: '100px' }}
+                                    labelAlign="left"
+                                    labelWrap
+                                    wrapperCol={{ flex: 1 }}
+                                    colon={false}
+                                    style={{ maxWidth: 500 }}
+
+                                >
+
+                                    <Form.Item label="Năm học" name="NamHoc" rules={[{ required: true }]}  >
+                                        <Input />
+                                    </Form.Item>
+
+                                    <Form.Item label="Học kì" name="HocKi" rules={[{ required: true }]}>
+                                        <Input />
+                                    </Form.Item>
+
+
+                                </Form>
+                            </Col>
+
+                        </Row>
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Space size="small">
+                                <Button type="primary" htmlType="submit">
+                                    Search
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        form.resetFields();
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+
+                            </Space>
+                        </div>
 
                     </Layout>
                     <Layout
@@ -458,29 +482,11 @@ const Diem = () => {
                         <Flex justify='space-between' align='center' className="flex-content">
 
                             <space>
-                                <h3> Quản lý loại thiết bị </h3>
+                                <h3> Bảng điểm học viên </h3>
                             </space>
-
-
-                            <Space size={25}
-
-                            >
-                                <Button type="primary" size='middle' onClick={showModal}>
-                                    <PlusOutlined />
-                                </Button>
-
-
-                            </Space>
-
 
                         </Flex>
                     </Layout>
-                    <Search placeholder="input search text" onSearch={onSearch} enterButton
-                        style={{
-                            paddingBottom: 11,
-                        }}
-                    />
-
 
                     <Table
                         size='small'
@@ -499,14 +505,35 @@ const Diem = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'ID',
+                                title: 'Môn học',
                                 dataIndex: 'id',
                                 key: 'id',
                                 ...getColumnSearchProps('id', 'STT'),
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'Loại thiết bị',
+                                title: 'Điểm TX',
+                                dataIndex: 'tenNhom',
+                                key: 'tenNhom',
+                                ...getColumnSearchProps('ten', 'Đơn vị'),
+                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                            },
+                            {
+                                title: 'Điểm CC',
+                                dataIndex: 'tenNhom',
+                                key: 'tenNhom',
+                                ...getColumnSearchProps('ten', 'Đơn vị'),
+                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                            },
+                            {
+                                title: 'Điểm Thi',
+                                dataIndex: 'tenNhom',
+                                key: 'tenNhom',
+                                ...getColumnSearchProps('ten', 'Đơn vị'),
+                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                            },
+                            {
+                                title: 'Điểm TB',
                                 dataIndex: 'tenNhom',
                                 key: 'tenNhom',
                                 ...getColumnSearchProps('ten', 'Đơn vị'),
@@ -637,10 +664,13 @@ const Diem = () => {
                             {
                                 title: 'Loại ',
                                 dataIndex: 'loai',
+
                                 key: 'loai',
                                 render: (text) => <p>{text}</p>,
 
                             }
+
+
                         ]}
                         pagination={{
                             pageSize: 5, // Số lượng hàng trên mỗi trang
@@ -651,12 +681,6 @@ const Diem = () => {
 
                 </Form>
             </Modal >
-
-
-
-
-
-
 
         </>
     )
