@@ -37,18 +37,12 @@ const items = [
     ),
     getItem('Học viên ', '/hocvien', 'sub3', <ContactsOutlined />),
     getItem('Trang thiết bị', null, 'sub4', <ToolOutlined />, [
-        getItem('Nhóm thiết bị ', '/nhom_thiet_bi', '5'),
-        getItem('Loại thiết bị', '/loai_thiet_bi', '6'),
-        getItem('Thiết bị', '/thiet_bi', '7'),
-        getItem('Cấp phát', '/cap_phat', '8'),
+        getItem('Thiết bị', '/thiet_bi', '4'),
+        getItem('Cấp phát', '/cap_phat', '5'),
     ]),
     getItem('Kế hoạch huấn luyện', null, 'sub5', <SnippetsOutlined />, [
         getItem('Option 9', '/home', '9'),
         getItem('Option 10', '/home', '10'),
-        getItem('Submenu', null, 'sub6',
-            [
-                getItem('Option 11', '/home', '11'),
-                getItem('Option 12', '/home', '12')]),
     ]),
 ];
 // const [selectedSidebarIndex, setSelectedSidebarIndex] = useState(null);
