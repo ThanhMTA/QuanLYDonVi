@@ -3,7 +3,7 @@ import {
     DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
     ExclamationCircleFilled,
     SearchOutlined,
-    PlusSquareTwoTone
+    FilterTwoTone
 
 } from '@ant-design/icons';
 import {
@@ -34,100 +34,10 @@ const { Search } = Input;
 
 // form 
 const { Option } = Select;
-const AdvancedSearchForm = () => {
-    const { token } = theme.useToken();
-    const [form] = Form.useForm();
-    const [expand, setExpand] = useState(false);
-    const formStyle = {
-        maxWidth: 'none',
-        background: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        padding: 24,
-    };
-    const getFields = () => {
-        const count = expand ? 10 : 6;
-        const children = [];
-        for (let i = 0; i < count; i++) {
-            children.push(
-                <Col span={8} key={i}>
-                    {i % 3 !== 1 ? (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Input something!',
-                                },
-                            ]}
-                        >
-                            <Input placeholder="placeholder" />
-                        </Form.Item>
-                    ) : (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Select something!',
-                                },
-                            ]}
-                            initialValue="1"
-                        >
-                            <Select>
-                                <Option value="1">
-                                    longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong
-                                </Option>
-                                <Option value="2">222</Option>
-                            </Select>
-                        </Form.Item>
-                    )}
-                </Col>,
-            );
-        }
-        return children;
-    };
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-    };
-    return (
-        <Form form={form} name="advanced_search" style={formStyle} onFinish={onFinish}>
-            <Row gutter={24}>{getFields()}</Row>
-            <div
-                style={{
-                    textAlign: 'right',
-                }}
-            >
-                <Space size="small">
-                    <Button type="primary" htmlType="submit">
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            form.resetFields();
-                        }}
-                    >
-                        Clear
-                    </Button>
-                    <a
-                        style={{
-                            fontSize: 12,
-                        }}
-                        onClick={() => {
-                            setExpand(!expand);
-                        }}
-                    >
-                        <DownOutlined rotate={expand ? 180 : 0} /> Collapse
-                    </a>
-                </Space>
-            </div>
-        </Form>
-    );
-};
 
 
-const ThietBi = () => {
+
+const LoaiThietBi = () => {
 
     const [donViData, setDonViData] = useState([]);
     const [donViDatas, setDonViDatas] = useState([]);
@@ -446,118 +356,6 @@ const ThietBi = () => {
                     }}>
                     <Layout
                         style={{
-                            padding: 24,
-
-
-                            // display: 'flex',
-                        }}
-                    >
-
-                        <Row align="middle">
-                            <Col span={8} style={{ paddingRight: ' 10px' }}>
-
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-
-                                >
-                                    <Form.Item label="Loại Thiết Bị" name="Khoa" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item style={{ textAlign: 'right' }}>
-                                        <Space size="small">
-                                            <Button type="primary" htmlType="submit">
-                                                <Link to='loai_thiet_bi'> <PlusOutlined /></Link>
-                                            </Button>
-                                        </Space>
-                                    </Form.Item>
-
-
-                                </Form>
-
-                            </Col>
-                            <Col span={8} style={{ padding: '0 5px' }} >
-
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-                                >
-                                    <Form.Item label="Nhóm Thiết Bị" name="Khoa" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item style={{ textAlign: 'right' }}>
-                                        <Space size="small">
-                                            <Button type="primary" htmlType="submit">
-                                                <Link to='nhom_thiet_bi'> <PlusOutlined /></Link>
-                                            </Button>
-
-                                        </Space>
-                                    </Form.Item>
-
-
-                                </Form>
-
-                            </Col>
-
-                            <Col span={8} style={{ paddingLeft: ' 10px' }} >
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-                                >
-                                    <Form.Item label="Đơn Vị" name="Khoa" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item style={{ textAlign: 'right' }}>
-
-                                    </Form.Item>
-
-
-                                </Form>
-
-
-
-
-                            </Col>
-
-                        </Row>
-
-                        <div style={{ textAlign: 'right' }}>
-                            <Space size="small">
-                                <Button type="primary" htmlType="submit">
-                                    <Link to='diem'>Search</Link>
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        form.resetFields();
-                                    }}
-                                >
-                                    Clear
-                                </Button>
-
-                            </Space>
-                        </div>
-
-                    </Layout>
-                    <Layout
-                        style={{
 
                             background: colorBgContainer,
 
@@ -569,13 +367,15 @@ const ThietBi = () => {
                         <Flex justify='space-between' align='center' className="flex-content">
 
                             <space>
-                                <h3> Danh sách học viên </h3>
+                                <h3> Danh sách Cán bộ </h3>
                             </space>
-
-
                             <Space size={25}
 
                             >
+
+                                <Input />
+                                <FilterTwoTone style={{ fontSize: '16px', color: '#08c' }} />
+
                                 <Button type="primary" size='middle' onClick={showModal}>
                                     <PlusOutlined />
                                 </Button>
@@ -610,7 +410,7 @@ const ThietBi = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'Mã Thiết Bị',
+                                title: 'ID',
                                 dataIndex: 'id',
                                 key: 'id',
                                 ...getColumnSearchProps('id', 'STT'),
@@ -618,20 +418,6 @@ const ThietBi = () => {
                             },
                             {
                                 title: 'Loại thiết bị',
-                                dataIndex: 'tenNhom',
-                                key: 'tenNhom',
-                                ...getColumnSearchProps('ten', 'Đơn vị'),
-                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
-                            },
-                            {
-                                title: 'Số lượng',
-                                dataIndex: 'tenNhom',
-                                key: 'tenNhom',
-                                ...getColumnSearchProps('ten', 'Đơn vị'),
-                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
-                            },
-                            {
-                                title: 'Trạng thái',
                                 dataIndex: 'tenNhom',
                                 key: 'tenNhom',
                                 ...getColumnSearchProps('ten', 'Đơn vị'),
@@ -784,4 +570,4 @@ const ThietBi = () => {
     )
 
 }
-export default ThietBi;
+export default LoaiThietBi;
