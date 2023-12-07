@@ -385,6 +385,7 @@ const LoaiDonVi = () => {
 
 
                     <Table
+                        size='small'
                         dataSource={loaiDonViData.map((dv, index) => ({
                             id: dv.id,
                             stt: index + 1,
