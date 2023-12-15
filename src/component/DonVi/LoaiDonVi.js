@@ -367,6 +367,9 @@ const LoaiDonVi = () => {
                             <Space size={25}
 
                             >
+                                <Search placeholder="input search text" onSearch={onSearch} enterButton
+
+                                />
                                 <Button type="primary" size='middle' onClick={showModal}>
                                     <PlusOutlined />
                                 </Button>
@@ -377,11 +380,7 @@ const LoaiDonVi = () => {
 
                         </Flex>
                     </Layout>
-                    <Search placeholder="input search text" onSearch={onSearch} enterButton
-                        style={{
-                            paddingBottom: 11,
-                        }}
-                    />
+
 
 
                     <Table

@@ -193,7 +193,7 @@ const DonVi = () => {
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
-            loaiDV: record.loai, // Đặt giá trị của loại đơn vị từ record vào trường "loaiDV"
+            loaiDv: record.loaiDv, // Đặt giá trị của loại đơn vị từ record vào trường "loaiDV"
             capTren: record.captren, // Đặt giá trị của cấp trên từ record vào trường "capTren"
             diaChi: record.address, // Đặt giá trị của địa chỉ từ record vào trường "diaChi"
             ten: record.ten, // Đặt giá trị của tên đơn vị từ record vào trường "ten"
@@ -248,7 +248,7 @@ const DonVi = () => {
     };
 
 
-   
+
     //     {
     //         title: 'Quản lý học viên',
     //         key: '0-0',
@@ -562,6 +562,12 @@ const DonVi = () => {
                                     <Space size={25}
 
                                     >
+                                        <Search
+
+                                            placeholder="input search text"
+                                            onSearch={onSearch}
+                                            enterButton
+                                        />
                                         <Button type="primary" size='middle' onClick={showModal}>
                                             <PlusOutlined />
                                         </Button>
@@ -572,14 +578,7 @@ const DonVi = () => {
 
                                 </Flex>
                             </Layout>
-                            <Search
-                                style={{
-                                    paddingBottom: 11,
-                                }}
-                                placeholder="input search text"
-                                onSearch={onSearch}
-                                enterButton
-                            />
+
                             {/* <Search
                                 placeholder="input search text"
                                 allowClear
@@ -606,7 +605,7 @@ const DonVi = () => {
                                     ten: dv.ten,
                                     sdt: dv.sdt,
                                     address: dv.diaChi,
-                                    loai: dv.loaiDV,
+                                    loaiDv: dv.loaiDv,
                                     captren: dv.capTren
                                     // Join tags if it's an array
                                 }))}
@@ -653,10 +652,10 @@ const DonVi = () => {
                                     },
                                     {
                                         title: 'Loại ',
-                                        dataIndex: 'loai',
+                                        dataIndex: 'loaiDv',
 
-                                        key: 'loai',
-                                        ...getColumnSearchProps('loai', 'Loại '),
+                                        key: 'loaiDv',
+                                        ...getColumnSearchProps('loaiDv', 'Loại '),
                                         render: (text) => <p>{text}</p>,
 
                                     },
@@ -708,16 +707,37 @@ const DonVi = () => {
                     </Form.Item>
                     <Form.Item label="Cấp trên" name="capTren">
                         <TreeSelect
+                            showSearch
+                            style={{
+                                width: 470,
+                            }}
+                            placeholder="Search to Select"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
                             treeData={treeData} />
                     </Form.Item>
-                    <Form.Item label="Loại đơn vị" name="loaiDV">
-                        <Select>
-                            {loaiDonViData.map((dv, index) => (
-                                <Select.Option key={dv.id} value={dv.tenNhom}>
-                                    {dv.tenNhom} {/* Use dv.ten or the appropriate property for option label */}
-                                </Select.Option>
-                            ))}
-                        </Select>
+                    <Form.Item label="Loại đơn vị" name="loaiDv">
+
+                        <Select
+                            showSearch
+                            style={{
+                                width: 470,
+                            }}
+                            placeholder="Search to Select"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            options={loaiDonViData.map(item => ({
+                                value: item.tenNhom, // Assuming your API response has 'value' and 'label' fields
+                                label: item.tenNhom,
+                            }))}
+                        />
+
                     </Form.Item>
 
                     <Form.Item label="Tên đơn vị" name="ten">
