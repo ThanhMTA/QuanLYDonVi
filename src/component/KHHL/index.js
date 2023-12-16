@@ -3,7 +3,8 @@ import {
     DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
     ExclamationCircleFilled,
     SearchOutlined,
-    PlusSquareTwoTone
+    PlusSquareTwoTone,
+    CalendarTwoTone
 
 } from '@ant-design/icons';
 import {
@@ -279,13 +280,14 @@ const KHHL = () => {
     const showEditModal = (record) => {
         form.setFieldsValue({
             id: record.id,
-            ten: record.ten,
-            ngaysinh: record.ngaysinh, // Sử dụng ngày sinh đã định dạng
-            quequan: record.quequan,
-            capBac: record.capBac,
-            sdt: record.sdt,
-            cccd: record.cccd,
+            noidung: record.noidung,
+            tgbatdau: record.tgbatdau,
+            tgketthuc: record.tgketthuc,
+            tongtiethoc: record.tongtiethoc,
+            ngaylap: record.ngaylap,
+            maKhhl: record.maKhhl,
             donVi: record.donVi
+
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
     };
@@ -472,12 +474,12 @@ const KHHL = () => {
                         dataSource={kHHLData.map((dv, index) => ({
                             id: dv.id,
                             stt: index + 1,
-                            ten: dv.ten,
-                            ngaysinh: moment(dv.ngaysinh),
-                            quequan: dv.quequan,
-                            capBac: dv.capBac,
-                            sdt: dv.sdt,
-                            cccd: dv.cccd,
+                            noidung: dv.noidung,
+                            tgbatdau: moment(dv.tgbatdau),
+                            tgketthuc: moment(dv.tgketthuc),
+                            tongtiethoc: dv.tongtiethoc,
+                            ngaylap: moment(dv.ngaylap),
+                            maKhhl: dv.maKhhl,
                             donVi: dv.donVi
                             // Join tags if it's an array
                         }))}
@@ -491,57 +493,57 @@ const KHHL = () => {
                             },
                             {
                                 title: 'Mã',
-                                dataIndex: 'ten',
-                                key: 'ten',
+                                dataIndex: 'maKhhl',
+                                key: 'maKhhl',
 
                             },
                             {
                                 title: 'Nội dung',
-                                dataIndex: 'ten',
-                                key: 'ten',
+                                dataIndex: 'noidung',
+                                key: 'noidung',
 
                             },
                             {
                                 title: 'Ngày bắt đầu',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
+                                dataIndex: 'tgbatdau',
+                                key: 'tgbatdau',
                                 render: (text, record) => (
                                     <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                        {moment(record.tgbatdau).format('DD/MM/YYYY')}
                                     </span>
                                 ),
 
                             },
                             {
                                 title: 'Ngày kết thúc',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
+                                dataIndex: 'tgketthuc',
+                                key: 'tgketthuc',
                                 render: (text, record) => (
                                     <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                        {moment(record.tgketthuc).format('DD/MM/YYYY')}
                                     </span>
                                 ),
 
                             },
                             {
                                 title: 'Tổng tiết học',
-                                dataIndex: 'quequan',
-                                key: 'quequan',
+                                dataIndex: 'tongtiethoc',
+                                key: 'tongtiethoc',
 
                             },
                             {
                                 title: 'Đơn vị lập',
-                                dataIndex: 'capBac',
-                                key: 'capBac',
+                                dataIndex: 'donVi',
+                                key: 'donVi',
 
                             },
                             {
                                 title: 'Ngày lập',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
+                                dataIndex: 'ngaylap',
+                                key: 'ngaylap',
                                 render: (text, record) => (
                                     <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                        {moment(record.ngaylap).format('DD/MM/YYYY')}
                                     </span>
                                 ),
 
@@ -555,7 +557,8 @@ const KHHL = () => {
                                             <EditTwoTone />
                                         </a>
                                         <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
-                                        <Link to='diem'> <PlusOutlined /></Link>
+                                        <Link to={`/khhl/lich/${record.id}`}>  <CalendarTwoTone /></Link>
+
 
 
                                     </Space>
@@ -607,32 +610,34 @@ const KHHL = () => {
                 >
 
                     <Form.Item label="ID" name="id" rules={[{ required: true }]}  >
+                        <Input disabled />
+                    </Form.Item>
+                    <Form.Item label="Mã" name="maKhhl" rules={[{ required: true }]}  >
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Mã" name="ten" rules={[{ required: true }]}  >
+                    <Form.Item label="Nội Dung" name="noidung" rules={[{ required: true }]}  >
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Mã" name="ten" rules={[{ required: true }]}  >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Ngày sinh" name="ngaysinh" rules={[{ required: true }]}>
+                    <Form.Item label="Ngày bắt đầu " name="tgbatdau" rules={[{ required: true }]}>
                         <DatePicker format={'YYYY/MM/DD'}
                             style={{
                                 width: 380,
                             }} />
                     </Form.Item>
-                    <Form.Item label="Quê quán" name="quequan" rules={[{ required: true }]}>
+                    <Form.Item label="Ngày kết thúc " name="tgketthuc" rules={[{ required: true }]}>
+                        <DatePicker format={'YYYY/MM/DD'}
+                            style={{
+                                width: 380,
+                            }} />
+                    </Form.Item>
+                    <Form.Item label="Tổng tiết học" name="tongtiethoc" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Cấp bậc" name="capBac" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="SĐT" name="sdt" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="CCCD" name="cccd" rules={[{ required: true }]}>
-                        <Input />
+                    <Form.Item label="Ngày lập " name="ngaylap" rules={[{ required: true }]}>
+                        <DatePicker format={'YYYY/MM/DD'}
+                            style={{
+                                width: 380,
+                            }} />
                     </Form.Item>
 
                     <Form.Item label="Đơn vị" name="donVi" rules={[{ required: true }]}>

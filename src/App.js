@@ -7,11 +7,15 @@ import LoaiDonVi from './component/DonVi/LoaiDonVi';
 import CanBo from './component/DonVi/CanBo';
 import ThietBi from './component/ThietBi/ThietBI';
 import HocVien from './component/HocVien/HocVien';
-import Diem from './component/HocVien/Diem';
+// import Diem from './component/HocVien/Diem';
 import CapPhat from './component/ThietBi/CapPhat';
 import NhomThietBi from './component/ThietBi/NhomThietBi';
 import LoaiThietBi from './component/ThietBi/LoaiThietBi';
 import KHHL from './component/KHHL';
+import LICHHL from './component/KHHL/LichHL';
+import HocVienHL from './component/KHHL/HocVien';
+import ChuyenCan from './component/KHHL/ChuyenCan';
+import Diem from './component/KHHL/KiemTra';
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 function App() {
@@ -34,12 +38,14 @@ function App() {
             <Route path="/thiet_bi/nhom_thiet_bi" element={<NhomThietBi />} />
             <Route path="/thiet_bi/loai_thiet_bi" element={<LoaiThietBi />} />
             <Route path="/khhl" element={<KHHL />} />
-
-
+            <Route path="/lich" element={<LICHHL />} />
+            <Route path="/khhl/lich/:id" element={<LICHHL />} />
+            <Route path="/donvi_thuchien" element={<HocVienHL />} />
+            <Route path="/chuyencan" element={<ChuyenCan />} />
+            <Route path="/diem" element={<Diem />} />
 
           </Routes>
         </BrowserRouter>
-
 
       </div>
 

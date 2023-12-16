@@ -22,9 +22,8 @@ import {
 import moment from 'moment';
 import 'moment/locale/vi'; // hoặc 'moment/locale/<tên_locale>'
 
-import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
-
-import Nav from '../Nav';
+import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter, useParams } from 'react-router-dom';
+import Nav from '../../Nav';
 moment.locale('vi');
 // import './index.css'
 const { Header, Content, Sider } = Layout;
@@ -40,17 +39,18 @@ const { Option } = Select;
 
 
 const LICHHL = () => {
-
-    const [donViData, setDonViData] = useState([]);
+    const { id } = useParams();
+    const idKHHL = parseInt(id, 10);
+    const [kHHLData, setKHHLData] = useState([]);
 
     const [loaiTBData, setLoaiTBData] = useState([]);
     const [nhomTBData, setNhomTBData] = useState([]);
 
-    const [lichHLData, setLICHHLData] = useState([]);
+    const [lICHHLData, setLICHHLData] = useState([]);
     const [selectedUnitId, setSelectedUnitId] = useState(null);
     const [selectedLoaiTb, setSelectedLoaiTb] = useState(null);
     const [selectedDV, setSelectedDV] = useState(null);
-
+    const [selectedValue, setSelectedValue] = useState(idKHHL);
 
 
     // const [treeData, setTreeData] = useState([]);
@@ -60,22 +60,22 @@ const LICHHL = () => {
     useEffect(() => {
         // Gọi API khi component được mount
 
-        fetchDonViData();
+        fetchKHHLData();
         fetchLICHHLTBData();
         fetchLICHHLData();
     }, []);
 
 
-    const fetchDonViData = async () => {
+    const fetchKHHLData = async () => {
         try {
-            const response = await fetch('https://localhost:44325/api/DonVi');
+            const response = await fetch('https://localhost:44325/api/KHHL');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            setDonViData(data);
-            console.log("Fetched data: ", data); // Hiển thị toàn bộ dữ liệu từ donViData
-            console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong donViData
+            setKHHLData(data);
+            console.log("Fetched data: ", data); // Hiển thị toàn bộ dữ liệu từ kHHLData
+            console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong kHHLData
         } catch (error) {
             console.error('There was a problem fetching the data: ', error);
         }
@@ -87,7 +87,8 @@ const LICHHL = () => {
     // api get all thiet bi 
     const fetchLICHHLData = async () => {
         try {
-            const response = await fetch('https://localhost:44325/api/LICHHL');
+            var id = idKHHL
+            const response = await fetch(`https://localhost:44325/api/LICHHL/Filter/${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -122,7 +123,7 @@ const LICHHL = () => {
                 },
                 body: JSON.stringify(formData)
             });
-            const updatedResponse = await fetch('https://localhost:44325/api/LICHHL');
+            const updatedResponse = fetchLICHHLTBData(formData.khhl);
             const updatedData = await updatedResponse.json();
             setLICHHLData(updatedData);
             setLoading(false);
@@ -131,6 +132,7 @@ const LICHHL = () => {
             console.error('Error adding data:', error);
             setLoading(false);
             setOpen(false);
+
         }
     };
 
@@ -153,7 +155,7 @@ const LICHHL = () => {
                 // Xử lý khi sửa thành công
 
                 // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44325/api/LICHHL');
+                const updatedResponse = fetchLICHHLTBData(formData.khhl);
                 const updatedData = await updatedResponse.json();
 
                 // Cập nhật state loaiTBData với dữ liệu mới
@@ -183,7 +185,7 @@ const LICHHL = () => {
                 .then(response => {
                     if (response.ok) {
                         // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44325/api/LICHHL');
+                        return fetchLICHHLTBData(selectedValue);
                     }
                     throw new Error('Delete request failed');
                 })
@@ -208,17 +210,19 @@ const LICHHL = () => {
             console.error('There was a problem fetching the data: ', error);
         }
     };
+
     const handleSelectChange = (value) => {
         // Assuming value is the selected ID from the Select component
+        setSelectedValue(idKHHL);
+        setSelectedValue(value);
         fetchLICHHLTBData(value);
-        console.log("loai thiet bi :", loaiTBData)
     };
     const onSearch = (searchText) => {
         // Gọi API với từ khoá tìm kiếm searchText
         fetch(`https://localhost:44325/api/LICHHL/search/${encodeURIComponent(searchText)}/${selectedUnitId}`)
             .then((response) => response.json())
             .then((data) => {
-                // Cập nhật state lichHLData với kết quả trả về từ API
+                // Cập nhật state lICHHLData với kết quả trả về từ API
                 setLICHHLData(data);
             })
             .catch((error) => {
@@ -226,66 +230,25 @@ const LICHHL = () => {
             });
     };
 
-    // add 
-    const treeData = donViData
-        .filter(dv => dv.capTren === null)
-        .map(dv => ({
-            key: dv.id,
-            title: dv.ten,
-            value: dv.ten,
-            children:
-                donViData
-                    .filter(child => child.capTren === dv.ten)
-                    .map(child => ({
-                        key: child.id,
-                        title: child.ten,
-                        value: child.ten,
-                        children: donViData
-                            .filter(child2 => child2.capTren === child.ten)
-                            .map(child2 => ({
-                                key: child2.id,
-                                title: child2.ten,
-                                value: child2.ten,
-                                children: donViData
-                                    .filter(child3 => child3.capTren === child2.ten)
-                                    .map(child3 => ({
-                                        key: child3.id,
-                                        title: child3.ten,
-                                        value: child3.ten,
 
-
-                                    }))
-
-                            }))
-                    }))
-
-        }));
-    const onSelect = (selectedKeys, info) => {
-        const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
-
-        // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
-        if (info) {
-            setSelectedUnitId(info.key);
-            fetchLICHHLTBData(info.key);
-        }
-        console.log("id cua d v", info.key)
-    };
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const showModal = () => {
-        form.setFieldsValue();
+
+        form.resetFields()
+        form.setFieldsValue({
+            khhl: selectedValue
+        });
         setOpen(true);
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
             id: record.id,
-            ten: record.ten,
-            ngaysinh: record.ngaysinh, // Sử dụng ngày sinh đã định dạng
-            quequan: record.quequan,
-            capBac: record.capBac,
-            sdt: record.sdt,
-            cccd: record.cccd,
-            donVi: record.donVi
+            ngay: record.ngay,
+            tietbatdau: record.tietbatdau,
+            tietketthuc: record.tietketthuc,
+            tongtiethoc: record.tongtiethoc,
+            khhl: record.khhl
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
     };
@@ -300,6 +263,7 @@ const LICHHL = () => {
     };
     const handleCancel = () => {
         setOpen(false);
+        form.resetFields()
     };
     const handleCancel1 = () => {
         setModalType(false);
@@ -432,26 +396,25 @@ const LICHHL = () => {
                             <Space size={25}
 
                             >
-                                <TreeSelect
-
+                                <Select
                                     showSearch
-
                                     placeholder="Search to Select"
                                     optionFilterProp="children"
+                                    onChange={handleSelectChange}
                                     filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                     filterSort={(optionA, optionB) =>
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
-                                    treeData={treeData}
-                                    onSelect={onSelect}
+                                    options={kHHLData.map(item => ({
+                                        value: item.id, // Assuming your API response has 'value' and 'label' fields
+                                        label: item.noidung,
+                                    }))}
+                                    style={{ width: 400 }}
+                                    value={selectedValue}
 
-                                    style={{ width: 300 }}
+
+
                                 />
-
-
-
-
-
                                 <Search placeholder="input search text" onSearch={onSearch} enterButton
                                 />
                                 <Button type="primary" size='middle' onClick={showModal}>
@@ -469,16 +432,14 @@ const LICHHL = () => {
 
                     <Table
                         size='small'
-                        dataSource={lichHLData.map((dv, index) => ({
+                        dataSource={lICHHLData.map((dv, index) => ({
                             id: dv.id,
                             stt: index + 1,
-                            ten: dv.ten,
-                            ngaysinh: moment(dv.ngaysinh),
-                            quequan: dv.quequan,
-                            capBac: dv.capBac,
-                            sdt: dv.sdt,
-                            cccd: dv.cccd,
-                            donVi: dv.donVi
+                            ngay: moment(dv.ngay),
+                            tietbatdau: dv.tietbatdau,
+                            tietketthuc: dv.tietketthuc,
+                            tongtiethoc: dv.tongtiethoc,
+                            khhl: dv.khhl
                             // Join tags if it's an array
                         }))}
                         columns={[
@@ -490,60 +451,33 @@ const LICHHL = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'Ngay',
-                                dataIndex: 'ten',
-                                key: 'ten',
-
-                            },
-                            {
-                                title: 'Nội dung',
-                                dataIndex: 'ten',
-                                key: 'ten',
-
-                            },
-                            {
-                                title: 'Ngày bắt đầu',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
+                                title: 'Ngày',
+                                dataIndex: 'ngay',
+                                key: 'ngay',
                                 render: (text, record) => (
                                     <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                        {moment(record.ngay).format('DD/MM/YYYY')}
                                     </span>
                                 ),
+                            },
+                            {
+                                title: 'Tiết học bắt đầu',
+                                dataIndex: 'tietbatdau',
+                                key: 'tietbatdau',
 
                             },
                             {
-                                title: 'Ngày kết thúc',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
-                                render: (text, record) => (
-                                    <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
-                                    </span>
-                                ),
+                                title: 'Tiết học kết thúc',
+                                dataIndex: 'tietketthuc',
+                                key: 'tietketthuc',
+
 
                             },
                             {
                                 title: 'Tổng tiết học',
-                                dataIndex: 'quequan',
-                                key: 'quequan',
+                                dataIndex: 'tongtiethoc',
+                                key: 'tongtiethoc',
 
-                            },
-                            {
-                                title: 'Đơn vị lập',
-                                dataIndex: 'capBac',
-                                key: 'capBac',
-
-                            },
-                            {
-                                title: 'Ngày lập',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
-                                render: (text, record) => (
-                                    <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
-                                    </span>
-                                ),
 
                             },
                             {
@@ -555,7 +489,8 @@ const LICHHL = () => {
                                             <EditTwoTone />
                                         </a>
                                         <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
-                                        <Link to='diem'> <PlusOutlined /></Link>
+                                        <Link to={`/lichhl/lich/${record.id}`}>  <PlusOutlined /></Link>
+
 
 
                                     </Space>
@@ -566,16 +501,6 @@ const LICHHL = () => {
 
 
                 </Content>
-
-
-
-
-
-
-
-
-
-
             </Layout>
             {/*  them moi  */}
             <Modal
@@ -607,49 +532,44 @@ const LICHHL = () => {
                 >
 
                     <Form.Item label="ID" name="id" rules={[{ required: true }]}  >
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
-                    <Form.Item label="Mã" name="ten" rules={[{ required: true }]}  >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Mã" name="ten" rules={[{ required: true }]}  >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Ngày sinh" name="ngaysinh" rules={[{ required: true }]}>
+                    <Form.Item label="Ngày " name="ngay" rules={[{ required: true }]}>
                         <DatePicker format={'YYYY/MM/DD'}
                             style={{
                                 width: 380,
                             }} />
                     </Form.Item>
-                    <Form.Item label="Quê quán" name="quequan" rules={[{ required: true }]}>
+                    <Form.Item label="tiết học bắt đầu " name="tietbatdau" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Cấp bậc" name="capBac" rules={[{ required: true }]}>
+                    <Form.Item label="Tiết học kết thúc" name="tietketthuc" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-
-                    <Form.Item label="SĐT" name="sdt" rules={[{ required: true }]}>
-                        <Input />
+                    <Form.Item label="Tổng tiết học" name="tongtiethoc" rules={[{ required: true }]}>
+                        <Input  disabled/>
                     </Form.Item>
-                    <Form.Item label="CCCD" name="cccd" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Đơn vị" name="donVi" rules={[{ required: true }]}>
-                        <TreeSelect
+                    <Form.Item label="KHHL" name="khhl" rules={[{ required: true }]}>
+                        <Select
                             showSearch
-                            style={{
-                                width: 380,
-                            }}
                             placeholder="Search to Select"
                             optionFilterProp="children"
+                            onChange={handleSelectChange}
                             filterOption={(input, option) => (option?.label ?? '').includes(input)}
                             filterSort={(optionA, optionB) =>
                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
-                            treeData={treeData} />
-
+                            options={kHHLData.map(item => ({
+                                value: item.id, // Assuming your API response has 'value' and 'label' fields
+                                label: item.noidung,
+                            }))}
+                            style={{ width: 380 }}
+                            value={selectedValue}
+                            disabled
+                        />
                     </Form.Item>
+
+
 
                 </Form>
             </Modal >

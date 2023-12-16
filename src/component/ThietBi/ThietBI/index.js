@@ -457,7 +457,6 @@ const ThietBi = () => {
                             // display: 'flex',
                         }}
                     >
-
                         <Row align="middle">
                             <Col span={8} style={{ paddingRight: ' 10px' }} >
 

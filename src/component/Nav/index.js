@@ -43,7 +43,9 @@ const items = [
     getItem('Kế hoạch huấn luyện', null, 'sub5', <SnippetsOutlined />, [
         getItem('Kế hoạch HL', '/khhl', '9'),
         getItem('LichHL', '/lich', '10'),
-        getItem('Chuyên Cần', '/chuyencan', '10'),
+        getItem('Điểm', '/diem', '11'),
+        getItem('Đơn vị thực hiện', '/donvi_thuchien', '12'),
+
 
 
     ]),

@@ -16,21 +16,23 @@ import {
     Radio,
     Select,
     Switch,
-    TreeSelect, Row, Col
+    TreeSelect, Row, Col,
+    Typography
+
 
 } from 'antd';
 import moment from 'moment';
 import 'moment/locale/vi'; // hoặc 'moment/locale/<tên_locale>'
 
+
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 
 import Nav from '../../Nav';
-moment.locale('vi');
 // import './index.css'
 const { Header, Content, Sider } = Layout;
 const { confirm } = Modal;
 const { Search } = Input;
-
+const { Title } = Typography;
 
 // const onSearch = (value, _e, info) => console.log(info?.source, value);
 
@@ -39,19 +41,20 @@ const { Option } = Select;
 
 
 
-const KiemTra = () => {
+const Diem = () => {
 
     const [donViData, setDonViData] = useState([]);
+    const [KHHLData, setKHHLData] = useState([]);
+    const [DVHLData, setDVHLData] = useState([]);
+    const [selected, setSelected] = useState([]);
+    const [selectedDV, setSelectedDV] = useState([]);
 
-    const [loaiTBData, setLoaiTBData] = useState([]);
-    const [nhomTBData, setNhomTBData] = useState([]);
+
 
     const [hocVienData, setHocVienData] = useState([]);
-    const [selectedUnitId, setSelectedUnitId] = useState(null);
-    const [selectedLoaiTb, setSelectedLoaiTb] = useState(null);
-    const [selectedDV, setSelectedDV] = useState(null);
 
 
+    const [loaiDonViData, setLoaiDonViData] = useState([]);
 
     // const [treeData, setTreeData] = useState([]);
 
@@ -60,11 +63,9 @@ const KiemTra = () => {
     useEffect(() => {
         // Gọi API khi component được mount
 
+        fetchKHHLData();
         fetchDonViData();
-        fetchHocVienTBData();
-        fetchHocVienData();
     }, []);
-
 
     const fetchDonViData = async () => {
         try {
@@ -80,60 +81,58 @@ const KiemTra = () => {
             console.error('There was a problem fetching the data: ', error);
         }
     };
-
-
-
-
-    // api get all thiet bi 
-    const fetchHocVienData = async () => {
+    const fetchDVHLData = async (id) => {
         try {
-            const response = await fetch('https://localhost:44325/api/HocVien');
+            const response = await fetch(`https://localhost:44325/api/DVHL/${id}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setDVHLData(data);
+        } catch (error) {
+            console.error('There was a problem fetching the data: ', error);
+        }
+    };
+    const fetchHVHLData = async (id) => {
+        try {
+            const response = await fetch(`https://localhost:44325/api/DVHL/Filter/${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
             setHocVienData(data);
-            console.log("Fetched data34: ", data); // Hiển thị toàn bộ dữ liệu từ loaiTBData
-            console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong loaiTBData
         } catch (error) {
             console.error('There was a problem fetching the data: ', error);
         }
     };
-    // Filter thiet bi 
+    //
+    const fetchKHHLData = async () => {
+        try {
+            const response = await fetch('https://localhost:44325/api/KHHL');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setKHHLData(data);
+        } catch (error) {
+            console.error('There was a problem fetching the data: ', error);
+        }
+    };
+    const handleSelectChange = (value) => {
+        // Assuming value is the selected ID from the Select component
+        fetchDVHLData(value);
+        setSelected(value);
+    }
+    const handleSelectChangeHV = (value) => {
+        // Assuming value is the selected ID from the Select component
+        fetchHVHLData(value);
 
-
-
-
-
+    }
 
     //  API them don vi moi 
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     // add new don vi 
-    const handleAddButtonClick = async () => {
-        try {
-            const formData = form.getFieldsValue();
-            setLoading(true);
-
-            const response = await fetch('https://localhost:44325/api/HocVien', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-            const updatedResponse = await fetch('https://localhost:44325/api/HocVien');
-            const updatedData = await updatedResponse.json();
-            setHocVienData(updatedData);
-            setLoading(false);
-            setOpen(false); // Check that this line is reached and the modal state is being updated properly
-        } catch (error) {
-            console.error('Error adding data:', error);
-            setLoading(false);
-            setOpen(false);
-        }
-    };
-
     const handleEditButtonClick = async () => {
         try {
             const formData = form.getFieldsValue(); // Lấy giá trị từ form
@@ -171,62 +170,6 @@ const KiemTra = () => {
         }
     };
 
-    // Còn lại giữ nguyên phần code cho Table, Modal, và các hàm khác
-
-
-    // delete loaitb 
-    const handleDeleteButtonClick = (id) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa đơn vị này?")) {
-            fetch(`https://localhost:44325/api/HocVien/${id}`, {
-                method: 'DELETE'
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44325/api/HocVien');
-                    }
-                    throw new Error('Delete request failed');
-                })
-                .then(response => response.json())
-                .then(updatedData => {
-                    // Cập nhật state loaiTBData với danh sách mới
-                    setHocVienData(updatedData);
-                })
-                .catch(error => console.error('Error deleting or fetching data:', error));
-        }
-    };
-    // get nhom thiet bi 
-    const fetchHocVienTBData = async (id) => {
-        try {
-            const response = await fetch(`https://localhost:44325/api/HocVien/Filter/${id}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            setHocVienData(data);
-        } catch (error) {
-            console.error('There was a problem fetching the data: ', error);
-        }
-    };
-    const handleSelectChange = (value) => {
-        // Assuming value is the selected ID from the Select component
-        fetchHocVienTBData(value);
-        console.log("loai thiet bi :", loaiTBData)
-    };
-    const onSearch = (searchText) => {
-        // Gọi API với từ khoá tìm kiếm searchText
-        fetch(`https://localhost:44325/api/HocVien/search/${encodeURIComponent(searchText)}/${selectedUnitId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                // Cập nhật state hocVienData với kết quả trả về từ API
-                setHocVienData(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    };
-
-    // add 
     const treeData = donViData
         .filter(dv => dv.capTren === null)
         .map(dv => ({
@@ -260,21 +203,24 @@ const KiemTra = () => {
                     }))
 
         }));
-    const onSelect = (selectedKeys, info) => {
-        const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
+    // const onSelect = (selectedKeys, info) => {
+    //     const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
 
-        // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
-        if (info) {
-            setSelectedUnitId(info.key);
-            fetchHocVienTBData(info.key);
-        }
-        console.log("id cua d v", info.key)
-    };
+    //     // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
+    //     if (info) {
+    //         setSelectedUnitId(info.key);
+    //     }
+    //     console.log("id cua d v", info.key)
+    // };
+    // add 
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const showModal = () => {
-        form.setFieldsValue();
-        setOpen(true);
+        form.resetFields()
+        form.setFieldsValue({
+            khhl: selected
+        });
+        setOpen(true)
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
@@ -289,8 +235,6 @@ const KiemTra = () => {
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
     };
-
-
     const handleOk = () => {
         setLoading(true);
         setTimeout(() => {
@@ -306,7 +250,9 @@ const KiemTra = () => {
     };
     // from 
     const [componentSize, setComponentSize] = useState('default');
-
+    const onFormLayoutChange = ({ size }) => {
+        setComponentSize(size);
+    };
     //
     // end add 
 
@@ -363,8 +309,18 @@ const KiemTra = () => {
                 text
             ),
     });
-
-
+    const onSearch = (searchText) => {
+        // Gọi API với từ khoá tìm kiếm searchText
+        fetch(`https://localhost:44319/api/LoaiDonVi/search/${encodeURIComponent(searchText)}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // Cập nhật state loaiDonViData với kết quả trả về từ API
+                setLoaiDonViData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    };
     // form 
     const { token } = theme.useToken();
 
@@ -413,156 +369,208 @@ const KiemTra = () => {
                         // display: 'flex',
                     }}>
 
-                    <Layout
-                        style={{
 
-                            background: colorBgContainer,
+                    <Layout style={{ marginTop: ' 20px' }}>
+                        <Form.Item label="Kế hoạch huấn luyện"
+                            name="Khoa"
+                            rules={[{ required: true }]}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 400,
+                                paddingTop: "20px"
+                            }}
+                        >
+                            <Select
+                                showSearch
+                                placeholder="Search to Select"
+                                optionFilterProp="children"
+                                onChange={handleSelectChange}
+                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                filterSort={(optionA, optionB) =>
+                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                }
+                                options={KHHLData.map(item => ({
+                                    value: item.id,
+                                    label: item.noidung,
+                                }))}
+                            />
+                        </Form.Item>
+                        <Content>
 
+                            <Row>
+                                <Col span={18} push={6} style={{ padding: ' 0 5px' }}>
 
+                                    <Title level={3} align="middle"> Danh học viên </Title>
+                                    <Layout
+                                        style={{
 
-                            // display: 'flex',
-                        }}
-                    >
-                        <Flex justify='space-between' align='center' className="flex-content">
-
-                            <space>
-                                <h3> Danh sách học viên </h3>
-                            </space>
-
-
-                            <Space size={25}
-
-                            >
-
-
-                                <TreeSelect
-
-                                    showSearch
-
-                                    placeholder="Search to Select"
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                    filterSort={(optionA, optionB) =>
-                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                    }
-                                    treeData={treeData}
-                                    onSelect={onSelect}
-
-                                    style={{ width: 300 }}
-                                />
-
-
-
+                                            paddingBottom: '10px'
 
 
-                                <Search placeholder="input search text" onSearch={onSearch} enterButton
-                                />
-                                <Button type="primary" size='middle' onClick={showModal}>
-                                    <PlusOutlined />
-                                </Button>
+
+                                            // display: 'flex',
+                                        }}
+                                    >
+                                        <Flex justify='flex-end' align='center' className="flex-content">
+                                            <Space size={25}
+
+                                            >
+                                                <Select
+                                                    showSearch
+                                                    placeholder="Search to Select"
+                                                    optionFilterProp="children"
+                                                    onChange={handleSelectChangeHV}
+                                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                    filterSort={(optionA, optionB) =>
+                                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                    }
+                                                    options={DVHLData.map(item => ({
+                                                        value: item.donVi,
+                                                        label: item.donVi,
+                                                    }))}
+                                                />
+
+                                            </Space>
 
 
-                            </Space>
+                                        </Flex>
+                                    </Layout>
+                                    <Table
+                                        size='small'
+                                        dataSource={hocVienData.map((dv, index) => ({
+                                            id: dv.id,
+                                            stt: index + 1,
+                                            ten: dv.ten,
+                                            ngaysinh: moment(dv.ngaysinh),
+                                            quequan: dv.quequan,
+                                            capBac: dv.capBac,
+                                            sdt: dv.sdt,
+                                            cccd: dv.cccd,
+                                            donVi: dv.donVi
+                                            // Join tags if it's an array
+                                        }))}
+                                        columns={[
+                                            {
+                                                title: 'STT',
+                                                dataIndex: 'stt',
+                                                key: 'stt',
+                                                ...getColumnSearchProps('id', 'STT'),
+                                                render: (text) => <p>{text}</p>,
+                                            },
+                                            {
+                                                title: 'Họ Tên',
+                                                dataIndex: 'ten',
+                                                key: 'ten',
+
+                                            },
+                                            {
+                                                title: 'Ngày sinh',
+                                                dataIndex: 'ngaysinh',
+                                                key: 'ngaysinh',
+                                                render: (text, record) => (
+                                                    <span>
+                                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                                    </span>
+                                                ),
+
+                                            },
+
+                                            {
+                                                title: 'Cấp bậc',
+                                                dataIndex: 'capBac',
+                                                key: 'capBac',
+
+                                            },
+                                            {
+                                                title: 'Đơn vị',
+                                                dataIndex: 'donVi',
+                                                key: 'donVi',
+
+                                            },
+                                            {
+                                                title: 'Điểm',
+                                                dataIndex: 'Diem',
+                                                key: 'Diem',
+
+                                            },
+                                            {
+                                                title: 'Hành động',
+                                                key: 'action',
+                                                render: (_, record) => (
+                                                    <Space size="middle">
+                                                        <a onClick={() => showEditModal(record)}>
+                                                            <EditTwoTone />
+                                                        </a>
 
 
-                        </Flex>
+                                                    </Space>
+                                                ),
+                                            },
+                                        ]}
+                                    />
+                                </Col>
+                                <Col span={6} pull={18} style={{ padding: ' 0 5px' }} >
+                                    <Title level={3} align="middle"> Danh sách đơn vị </Title>
+                                    <Layout
+                                        style={{
+
+                                            paddingBottom: '10px'
+
+
+
+                                            // display: 'flex',
+                                        }}
+                                    >
+                                        <Flex justify='space-between' align='center' className="flex-content">
+                                            <Space size={25}
+
+                                            >
+
+                                                <Search placeholder="input search text" onSearch={onSearch} enterButton
+                                                />
+                                                <Button type="primary" size='middle' onClick={showModal}>
+                                                    <PlusOutlined />
+                                                </Button>
+
+
+                                            </Space>
+
+
+                                        </Flex>
+                                    </Layout>
+                                    <Table
+                                        size='small'
+                                        dataSource={DVHLData.map((dv, index) => ({
+
+                                            stt: index + 1,
+                                            donVi: dv.donVi,
+                                            khhl: dv.idKhhl
+                                            // Join tags if it's an array
+                                        }))}
+                                        columns={[
+                                            {
+                                                title: 'STT',
+                                                dataIndex: 'stt',
+                                                key: 'stt',
+
+                                            },
+                                            {
+                                                title: 'Đơn vị',
+                                                dataIndex: 'donVi',
+                                                key: 'donVi'
+                                            },
+                                           
+                                        ]}
+                                    />
+
+                                </Col>
+                            </Row>
+                        </Content>
+
                     </Layout>
 
-
-
-                    <Table
-                        size='small'
-                        dataSource={hocVienData.map((dv, index) => ({
-                            id: dv.id,
-                            stt: index + 1,
-                            ten: dv.ten,
-                            ngaysinh: moment(dv.ngaysinh),
-                            quequan: dv.quequan,
-                            capBac: dv.capBac,
-                            sdt: dv.sdt,
-                            cccd: dv.cccd,
-                            donVi: dv.donVi
-                            // Join tags if it's an array
-                        }))}
-                        columns={[
-                            {
-                                title: 'STT',
-                                dataIndex: 'stt',
-                                key: 'stt',
-                                ...getColumnSearchProps('id', 'STT'),
-                                render: (text) => <p>{text}</p>,
-                            },
-                            {
-                                title: 'Họ Tên',
-                                dataIndex: 'ten',
-                                key: 'ten',
-
-                            },
-                            {
-                                title: 'Ngày sinh',
-                                dataIndex: 'ngaysinh',
-                                key: 'ngaysinh',
-                                render: (text, record) => (
-                                    <span>
-                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
-                                    </span>
-                                ),
-
-                            },
-                            {
-                                title: 'Quê quán',
-                                dataIndex: 'quequan',
-                                key: 'quequan',
-
-                            },
-                            {
-                                title: 'Cấp bậc',
-                                dataIndex: 'capBac',
-                                key: 'capBac',
-
-                            },
-                            {
-                                title: 'Đơn vị',
-                                dataIndex: 'donVi',
-                                key: 'donVi',
-
-                            },
-
-                            {
-                                title: 'Sdt',
-                                dataIndex: 'sdt',
-                                key: 'sdt',
-
-                            },
-                            {
-                                title: 'CCCD',
-                                dataIndex: 'cccd',
-                                key: 'cccd',
-
-                            },
-                            {
-                                title: 'Điểm',
-                                dataIndex: 'cccd',
-                                key: 'cccd',
-
-                            },
-                            {
-                                title: 'Hành động',
-                                key: 'action',
-                                render: (_, record) => (
-                                    <Space size="middle">
-                                        <a onClick={() => showEditModal(record)}>
-                                            <EditTwoTone />
-                                        </a>
-                                        <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
-                                        <Link to='diem'> <PlusOutlined /></Link>
-
-
-                                    </Space>
-                                ),
-                            },
-                        ]}
-                    />
 
 
                 </Content>
@@ -587,9 +595,7 @@ const KiemTra = () => {
                     <Button key="huy" onClick={handleCancel}>
                         Hủy
                     </Button>,
-                    <Button key="them" type="primary" onClick={handleAddButtonClick} loading={loading}>
-                        Thêm
-                    </Button>,
+            
                     <Button key="sua" type="primary" loading={loading} onClick={handleEditButtonClick}>
                         Sửa
                     </Button>
@@ -607,29 +613,34 @@ const KiemTra = () => {
                 >
 
                     <Form.Item label="ID" name="id" rules={[{ required: true }]}  >
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item label="Họ tên" name="ten" rules={[{ required: true }]}  >
-                        <Input />
+                        <Input  disabled/>
                     </Form.Item>
                     <Form.Item label="Ngày sinh" name="ngaysinh" rules={[{ required: true }]}>
                         <DatePicker format={'YYYY/MM/DD'}
                             style={{
                                 width: 380,
-                            }} />
+                            }} 
+                            disabled
+                            />
                     </Form.Item>
                     <Form.Item label="Quê quán" name="quequan" rules={[{ required: true }]}>
-                        <Input />
+                        <Input 
+                        disabled
+                        />
                     </Form.Item>
                     <Form.Item label="Cấp bậc" name="capBac" rules={[{ required: true }]}>
-                        <Input />
+                        <Input 
+                        disabled/>
                     </Form.Item>
 
                     <Form.Item label="SĐT" name="sdt" rules={[{ required: true }]}>
-                        <Input />
+                        <Input disabled/>
                     </Form.Item>
                     <Form.Item label="CCCD" name="cccd" rules={[{ required: true }]}>
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
 
                     <Form.Item label="Đơn vị" name="donVi" rules={[{ required: true }]}>
@@ -644,15 +655,21 @@ const KiemTra = () => {
                             filterSort={(optionA, optionB) =>
                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
-                            treeData={treeData} />
+                            treeData={treeData}
+                            disabled
+                             />
 
+                    </Form.Item>
+                    <Form.Item label="Điểm" name="Diem" rules={[{ required: true }]}>
+                        <Input  />
                     </Form.Item>
 
                 </Form>
             </Modal >
 
+
         </>
     )
 
 }
-export default KiemTra;
+export default Diem;
