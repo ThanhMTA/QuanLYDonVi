@@ -11,6 +11,7 @@ import Diem from './component/HocVien/Diem';
 import CapPhat from './component/ThietBi/CapPhat';
 import NhomThietBi from './component/ThietBi/NhomThietBi';
 import LoaiThietBi from './component/ThietBi/LoaiThietBi';
+import KHHL from './component/KHHL';
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 function App() {
@@ -32,6 +33,8 @@ function App() {
             <Route path="/cap_phat" element={<CapPhat />}></Route>
             <Route path="/thiet_bi/nhom_thiet_bi" element={<NhomThietBi />} />
             <Route path="/thiet_bi/loai_thiet_bi" element={<LoaiThietBi />} />
+            <Route path="/khhl" element={<KHHL />} />
+
 
 
           </Routes>

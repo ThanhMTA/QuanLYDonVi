@@ -3,6 +3,7 @@ import {
     DownOutlined, PlusOutlined, EditTwoTone, DeleteTwoTone, EyeTwoTone,
     ExclamationCircleFilled,
     SearchOutlined,
+    PlusSquareTwoTone
 
 } from '@ant-design/icons';
 import {
@@ -18,11 +19,13 @@ import {
     TreeSelect, Row, Col
 
 } from 'antd';
-
+import moment from 'moment';
+import 'moment/locale/vi'; // hoặc 'moment/locale/<tên_locale>'
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 
 import Nav from '../../Nav';
+moment.locale('vi');
 // import './index.css'
 const { Header, Content, Sider } = Layout;
 const { confirm } = Modal;
@@ -33,105 +36,22 @@ const { Search } = Input;
 
 // form 
 const { Option } = Select;
-const AdvancedSearchForm = () => {
-    const { token } = theme.useToken();
-    const [form] = Form.useForm();
-    const [expand, setExpand] = useState(false);
-    const formStyle = {
-        maxWidth: 'none',
-        background: token.colorFillAlter,
-        borderRadius: token.borderRadiusLG,
-        padding: 24,
-    };
-    const getFields = () => {
-        const count = expand ? 10 : 6;
-        const children = [];
-        for (let i = 0; i < count; i++) {
-            children.push(
-                <Col span={8} key={i}>
-                    {i % 3 !== 1 ? (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Input something!',
-                                },
-                            ]}
-                        >
-                            <Input placeholder="placeholder" />
-                        </Form.Item>
-                    ) : (
-                        <Form.Item
-                            name={`field-${i}`}
-                            label={`Field ${i}`}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Select something!',
-                                },
-                            ]}
-                            initialValue="1"
-                        >
-                            <Select>
-                                <Option value="1">
-                                    longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong
-                                </Option>
-                                <Option value="2">222</Option>
-                            </Select>
-                        </Form.Item>
-                    )}
-                </Col>,
-            );
-        }
-        return children;
-    };
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-    };
-    return (
-        <Form form={form} name="advanced_search" style={formStyle} onFinish={onFinish}>
-            <Row gutter={24}>{getFields()}</Row>
-            <div
-                style={{
-                    textAlign: 'right',
-                }}
-            >
-                <Space size="small">
-                    <Button type="primary" htmlType="submit">
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            form.resetFields();
-                        }}
-                    >
-                        Clear
-                    </Button>
-                    <a
-                        style={{
-                            fontSize: 12,
-                        }}
-                        onClick={() => {
-                            setExpand(!expand);
-                        }}
-                    >
-                        <DownOutlined rotate={expand ? 180 : 0} /> Collapse
-                    </a>
-                </Space>
-            </div>
-        </Form>
-    );
-};
+
 
 
 const HocVien = () => {
 
     const [donViData, setDonViData] = useState([]);
-    const [donViDatas, setDonViDatas] = useState([]);
 
-    const [loaiDonViData, setLoaiDonViData] = useState([]);
+    const [loaiTBData, setLoaiTBData] = useState([]);
+    const [nhomTBData, setNhomTBData] = useState([]);
+
+    const [hocVienData, setHocVienData] = useState([]);
+    const [selectedUnitId, setSelectedUnitId] = useState(null);
+    const [selectedLoaiTb, setSelectedLoaiTb] = useState(null);
+    const [selectedDV, setSelectedDV] = useState(null);
+
+
 
     // const [treeData, setTreeData] = useState([]);
 
@@ -139,40 +59,52 @@ const HocVien = () => {
     // ds don vi 
     useEffect(() => {
         // Gọi API khi component được mount
-        fetchDonViByLoaiDonViId();
-        fetchLoaiDonViData();
+
+        fetchDonViData();
+        fetchHocVienTBData();
+        fetchHocVienData();
     }, []);
 
 
-
-
-
-
-    const fetchDonViByLoaiDonViId = async (loaiDonViId) => {
+    const fetchDonViData = async () => {
         try {
-            const response = await fetch(`https://localhost:44319/api/DonVi/DonVi/${loaiDonViId}`);
-            const data = await response.json();
-            return data; // Trả về dữ liệu đơn vị từ API
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            return null;
-        }
-    };
-
-    const fetchLoaiDonViData = async () => {
-        try {
-            const response = await fetch('https://localhost:44319/api/LoaiDonVi');
+            const response = await fetch('https://localhost:44325/api/DonVi');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            setLoaiDonViData(data);
-            console.log("Fetched data34: ", data); // Hiển thị toàn bộ dữ liệu từ donViData
+            setDonViData(data);
+            console.log("Fetched data: ", data); // Hiển thị toàn bộ dữ liệu từ donViData
             console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong donViData
         } catch (error) {
             console.error('There was a problem fetching the data: ', error);
         }
     };
+
+
+
+
+    // api get all thiet bi 
+    const fetchHocVienData = async () => {
+        try {
+            const response = await fetch('https://localhost:44325/api/HocVien');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setHocVienData(data);
+            console.log("Fetched data34: ", data); // Hiển thị toàn bộ dữ liệu từ loaiTBData
+            console.log("First item ID: ", data[1].id); // Hiển thị ID của phần tử đầu tiên trong loaiTBData
+        } catch (error) {
+            console.error('There was a problem fetching the data: ', error);
+        }
+    };
+    // Filter thiet bi 
+
+
+
+
+
 
     //  API them don vi moi 
     const [form] = Form.useForm();
@@ -180,45 +112,35 @@ const HocVien = () => {
     // add new don vi 
     const handleAddButtonClick = async () => {
         try {
-            const formData = form.getFieldsValue(); // Lấy giá trị từ form
-
+            const formData = form.getFieldsValue();
             setLoading(true);
 
-            const response = await fetch('https://localhost:44319/api/LoaiDonVi', {
+            const response = await fetch('https://localhost:44325/api/HocVien', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData) // Gửi dữ liệu lấy được từ form lên API
+                body: JSON.stringify(formData)
             });
-
-            const data = await response.json();
-            console.log(data);
-
-            // Sau khi thêm dữ liệu, bạn có thể cập nhật danh sách hoặc state tương ứng tại đây
-            // Ví dụ:
-            // 1. Gọi lại API để lấy dữ liệu mới
-            const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
+            const updatedResponse = await fetch('https://localhost:44325/api/HocVien');
             const updatedData = await updatedResponse.json();
-
-            // 2. Cập nhật state với dữ liệu mới
-            setLoaiDonViData(updatedData);
-
-            // Đóng Modal sau khi thêm dữ liệu
+            setHocVienData(updatedData);
             setLoading(false);
-            handleCancel();
+            setOpen(false); // Check that this line is reached and the modal state is being updated properly
         } catch (error) {
             console.error('Error adding data:', error);
             setLoading(false);
+            setOpen(false);
         }
     };
+
     const handleEditButtonClick = async () => {
         try {
             const formData = form.getFieldsValue(); // Lấy giá trị từ form
 
             setLoading(true);
 
-            const response = await fetch(`https://localhost:44319/api/LoaiDonVi/${formData.id}`, {
+            const response = await fetch(`https://localhost:44325/api/HocVien/${formData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -231,11 +153,11 @@ const HocVien = () => {
                 // Xử lý khi sửa thành công
 
                 // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44319/api/LoaiDonVi');
+                const updatedResponse = await fetch('https://localhost:44325/api/HocVien');
                 const updatedData = await updatedResponse.json();
 
-                // Cập nhật state donViData với dữ liệu mới
-                setLoaiDonViData(updatedData);
+                // Cập nhật state loaiTBData với dữ liệu mới
+                setHocVienData(updatedData);
             } else {
                 console.error('Có lỗi khi cập nhật thông tin');
                 // Xử lý khi có lỗi từ phía server
@@ -252,29 +174,102 @@ const HocVien = () => {
     // Còn lại giữ nguyên phần code cho Table, Modal, và các hàm khác
 
 
-    // delete donvi 
+    // delete loaitb 
     const handleDeleteButtonClick = (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xóa đơn vị này?")) {
-            fetch(`https://localhost:44319/api/LoaiDonVi/${id}`, {
+            fetch(`https://localhost:44325/api/HocVien/${id}`, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
                         // Xóa thành công, cập nhật lại danh sách đơn vị
-                        return fetch('https://localhost:44319/api/LoaiDonVi');
+                        return fetch('https://localhost:44325/api/HocVien');
                     }
                     throw new Error('Delete request failed');
                 })
                 .then(response => response.json())
                 .then(updatedData => {
-                    // Cập nhật state donViData với danh sách mới
-                    setLoaiDonViData(updatedData);
+                    // Cập nhật state loaiTBData với danh sách mới
+                    setHocVienData(updatedData);
                 })
                 .catch(error => console.error('Error deleting or fetching data:', error));
         }
     };
+    // get nhom thiet bi 
+    const fetchHocVienTBData = async (id) => {
+        try {
+            const response = await fetch(`https://localhost:44325/api/HocVien/Filter/${id}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setHocVienData(data);
+        } catch (error) {
+            console.error('There was a problem fetching the data: ', error);
+        }
+    };
+    const handleSelectChange = (value) => {
+        // Assuming value is the selected ID from the Select component
+        fetchHocVienTBData(value);
+        console.log("loai thiet bi :", loaiTBData)
+    };
+    const onSearch = (searchText) => {
+        // Gọi API với từ khoá tìm kiếm searchText
+        fetch(`https://localhost:44325/api/HocVien/search/${encodeURIComponent(searchText)}/${selectedUnitId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // Cập nhật state hocVienData với kết quả trả về từ API
+                setHocVienData(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    };
 
     // add 
+    const treeData = donViData
+        .filter(dv => dv.capTren === null)
+        .map(dv => ({
+            key: dv.id,
+            title: dv.ten,
+            value: dv.ten,
+            children:
+                donViData
+                    .filter(child => child.capTren === dv.ten)
+                    .map(child => ({
+                        key: child.id,
+                        title: child.ten,
+                        value: child.ten,
+                        children: donViData
+                            .filter(child2 => child2.capTren === child.ten)
+                            .map(child2 => ({
+                                key: child2.id,
+                                title: child2.ten,
+                                value: child2.ten,
+                                children: donViData
+                                    .filter(child3 => child3.capTren === child2.ten)
+                                    .map(child3 => ({
+                                        key: child3.id,
+                                        title: child3.ten,
+                                        value: child3.ten,
+
+
+                                    }))
+
+                            }))
+                    }))
+
+        }));
+    const onSelect = (selectedKeys, info) => {
+        const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
+
+        // Gửi yêu cầu API để lấy thông tin đơn vị con tương ứng với ID đã chọn
+        if (info) {
+            setSelectedUnitId(info.key);
+            fetchHocVienTBData(info.key);
+        }
+        console.log("id cua d v", info.key)
+    };
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState(null);
     const showModal = () => {
@@ -283,33 +278,19 @@ const HocVien = () => {
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
-            // Đặt giá trị của loại đơn vị từ record vào trường "loaiDV"
-
-            tenNhom: record.tenNhom, // Đặt giá trị của tên đơn vị từ record vào trường "ten"
-
-            id: record.id
-            // Đặt giá trị của SĐT từ record vào trường "sdt"
-            // ... các trường khác tương tự ...
+            id: record.id,
+            ten: record.ten,
+            ngaysinh: record.ngaysinh, // Sử dụng ngày sinh đã định dạng
+            quequan: record.quequan,
+            capBac: record.capBac,
+            sdt: record.sdt,
+            cccd: record.cccd,
+            donVi: record.donVi
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
     };
 
-    const showDonvi = async (record) => {
-        try {
-            const idLoaiDonVi = record.id; // Giả sử id loại đơn vị có thể lấy từ record
-            const donViInfo = await fetchDonViByLoaiDonViId(idLoaiDonVi);
 
-            if (donViInfo) {
-                setDonViData(donViInfo); // Cập nhật dữ liệu đơn vị từ API
-                setModalType('showdonvi'); // Hiển thị Modal
-            } else {
-                // Xử lý khi không lấy được dữ liệu từ API
-            }
-        } catch (error) {
-            console.error('Error fetching DonVi data:', error);
-            // Xử lý lỗi khi gọi API
-        }
-    };
     const handleOk = () => {
         setLoading(true);
         setTimeout(() => {
@@ -325,9 +306,7 @@ const HocVien = () => {
     };
     // from 
     const [componentSize, setComponentSize] = useState('default');
-    const onFormLayoutChange = ({ size }) => {
-        setComponentSize(size);
-    };
+
     //
     // end add 
 
@@ -384,18 +363,8 @@ const HocVien = () => {
                 text
             ),
     });
-    const onSearch = (searchText) => {
-        // Gọi API với từ khoá tìm kiếm searchText
-        fetch(`https://localhost:44319/api/LoaiDonVi/search/${encodeURIComponent(searchText)}`)
-            .then((response) => response.json())
-            .then((data) => {
-                // Cập nhật state loaiDonViData với kết quả trả về từ API
-                setLoaiDonViData(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    };
+
+
     // form 
     const { token } = theme.useToken();
 
@@ -443,107 +412,7 @@ const HocVien = () => {
 
                         // display: 'flex',
                     }}>
-                    <Layout
-                        style={{
-                            padding: 24,
 
-
-                            // display: 'flex',
-                        }}
-                    >
-
-                        <Row align="middle">
-                            <Col span={8} style={{ paddingRight: ' 10px' }} >
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-                                >
-                                    <Form.Item label="Khóa học" name="Khoa" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item label="Loại đào tạo" name="loai" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-
-                                </Form>
-
-
-
-
-                            </Col>
-                            <Col span={8} style={{ padding: '0 5px' }} >
-
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-                                >
-                                    <Form.Item label="Đơn vị" name="DonVi" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item label="Lớp học" name="lop" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-
-                                </Form>
-
-                            </Col>
-                            <Col span={8} style={{ paddingLeft: ' 10px' }}>
-
-                                <Form
-                                    name="wrap"
-                                    labelCol={{ flex: '100px' }}
-                                    labelAlign="left"
-                                    labelWrap
-                                    wrapperCol={{ flex: 1 }}
-                                    colon={false}
-                                    style={{ maxWidth: 500 }}
-
-                                >
-                                    <Form.Item label="Năm học" name="NamHoc" rules={[{ required: true }]}  >
-                                        <Input />
-                                    </Form.Item>
-
-                                    <Form.Item label="Học kì" name="HocKi" rules={[{ required: true }]}>
-                                        <Input />
-                                    </Form.Item>
-
-
-                                </Form>
-                            </Col>
-
-                        </Row>
-
-                        <div style={{ textAlign: 'right' }}>
-                            <Space size="small">
-                                <Button type="primary" htmlType="submit">
-                                    <Link to='diem'>Search</Link>
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        form.resetFields();
-                                    }}
-                                >
-                                    Clear
-                                </Button>
-
-                            </Space>
-                        </div>
-
-                    </Layout>
                     <Layout
                         style={{
 
@@ -564,6 +433,30 @@ const HocVien = () => {
                             <Space size={25}
 
                             >
+
+
+                                <TreeSelect
+
+                                    showSearch
+
+                                    placeholder="Search to Select"
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    treeData={treeData}
+                                    onSelect={onSelect}
+
+                                    style={{ width: 300 }}
+                                />
+
+
+
+
+
+                                <Search placeholder="input search text" onSearch={onSearch} enterButton
+                                />
                                 <Button type="primary" size='middle' onClick={showModal}>
                                     <PlusOutlined />
                                 </Button>
@@ -574,19 +467,21 @@ const HocVien = () => {
 
                         </Flex>
                     </Layout>
-                    <Search placeholder="input search text" onSearch={onSearch} enterButton
-                        style={{
-                            paddingBottom: 11,
-                        }}
-                    />
+
 
 
                     <Table
                         size='small'
-                        dataSource={loaiDonViData.map((dv, index) => ({
+                        dataSource={hocVienData.map((dv, index) => ({
                             id: dv.id,
                             stt: index + 1,
-                            tenNhom: dv.tenNhom,
+                            ten: dv.ten,
+                            ngaysinh: moment(dv.ngaysinh),
+                            quequan: dv.quequan,
+                            capBac: dv.capBac,
+                            sdt: dv.sdt,
+                            cccd: dv.cccd,
+                            donVi: dv.donVi
                             // Join tags if it's an array
                         }))}
                         columns={[
@@ -598,19 +493,54 @@ const HocVien = () => {
                                 render: (text) => <p>{text}</p>,
                             },
                             {
-                                title: 'ID',
-                                dataIndex: 'id',
-                                key: 'id',
-                                ...getColumnSearchProps('id', 'STT'),
-                                render: (text) => <p>{text}</p>,
+                                title: 'Họ Tên',
+                                dataIndex: 'ten',
+                                key: 'ten',
+
                             },
                             {
-                                title: 'Loại thiết bị',
-                                dataIndex: 'tenNhom',
-                                key: 'tenNhom',
-                                ...getColumnSearchProps('ten', 'Đơn vị'),
-                                render: (_, record) => <a onClick={() => showDonvi(record)}>{record.tenNhom}</a>,
+                                title: 'Ngày sinh',
+                                dataIndex: 'ngaysinh',
+                                key: 'ngaysinh',
+                                render: (text, record) => (
+                                    <span>
+                                        {moment(record.ngaysinh).format('DD/MM/YYYY')}
+                                    </span>
+                                ),
+
                             },
+                            {
+                                title: 'Quê quán',
+                                dataIndex: 'quequan',
+                                key: 'quequan',
+
+                            },
+                            {
+                                title: 'Cấp bậc',
+                                dataIndex: 'capBac',
+                                key: 'capBac',
+
+                            },
+                            {
+                                title: 'Đơn vị',
+                                dataIndex: 'donVi',
+                                key: 'donVi',
+
+                            },
+
+                            {
+                                title: 'Sdt',
+                                dataIndex: 'sdt',
+                                key: 'sdt',
+
+                            },
+                            {
+                                title: 'CCCD',
+                                dataIndex: 'cccd',
+                                key: 'cccd',
+
+                            },
+
 
                             {
                                 title: 'Hành động',
@@ -621,6 +551,8 @@ const HocVien = () => {
                                             <EditTwoTone />
                                         </a>
                                         <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+                                        <Link to='diem'> <PlusOutlined /></Link>
+
 
                                     </Space>
                                 ),
@@ -660,96 +592,57 @@ const HocVien = () => {
 
                 ]}
             >
-                <Form form={form} layout="vertical">
-                    <Form.Item label="ID" name="id">
-                        <Input disabled />
+                <Form
+                    form={form}
+                    // layout="vertical"
+                    labelCol={{ flex: '90px' }}
+                    labelAlign="left"
+                    labelWrap
+                    wrapperCol={{ flex: 1 }}
+                    colon={false}
+                >
+
+                    <Form.Item label="ID" name="id" rules={[{ required: true }]}  >
+                        <Input />
                     </Form.Item>
-                    <Form.Item label="Tên loại đơn vị" name="tenNhom">
+                    <Form.Item label="Họ tên" name="ten" rules={[{ required: true }]}  >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Ngày sinh" name="ngaysinh" rules={[{ required: true }]}>
+                        <DatePicker format={'YYYY/MM/DD'}
+                            style={{
+                                width: 380,
+                            }} />
+                    </Form.Item>
+                    <Form.Item label="Quê quán" name="quequan" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Cấp bậc" name="capBac" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
 
+                    <Form.Item label="SĐT" name="sdt" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="CCCD" name="cccd" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
 
-                </Form>
-            </Modal >
-            <Modal
-                title="Danh sách đơn vị"
-                visible={modalType === 'showdonvi'}
-
-                width={1000}
-
-                onCancel={handleCancel1}
-                footer={[
-                    <Button key="huy" onClick={handleCancel1}>
-                        Thoát
-                    </Button>,
-
-                ]}
-            >
-                <Form form={form} layout="vertical">
-                    <Table
-                        dataSource={donViData.map((dv, index) => ({
-                            id: dv.id,
-                            stt: index + 1,
-                            ten: dv.ten,
-                            sdt: dv.sdt,
-                            address: dv.diaChi,
-                            loai: dv.loaiDV,
-                            captren: dv.capTren
-                            // Join tags if it's an array
-                        }))}
-                        columns={[
-                            {
-                                title: 'STT',
-                                dataIndex: 'stt',
-                                key: 'stt',
-                                render: (text) => <p> {text}</p>,
-                            },
-                            {
-                                title: 'Đơn vị',
-                                dataIndex: 'ten',
-                                key: 'ten',
-                                render: (text) => <a>{text}</a>,
-                            },
-                            {
-                                title: 'SDT',
-                                dataIndex: 'sdt',
-                                key: 'sdt',
-                                render: (text) => <p>{text}</p>,
-
-
-                            },
-
-                            {
-                                title: 'Địa chỉ  ',
-                                dataIndex: 'address',
-
-                                key: 'address',
-                                render: (text) => <p>{text}</p>,
-                            },
-                            {
-                                title: 'Cấp trên   ',
-                                dataIndex: 'captren',
-
-                                key: 'capTren',
-                                render: (text) => <p>{text}</p>,
-                            },
-                            {
-                                title: 'Loại ',
-                                dataIndex: 'loai',
-
-                                key: 'loai',
-                                render: (text) => <p>{text}</p>,
-
+                    <Form.Item label="Đơn vị" name="donVi" rules={[{ required: true }]}>
+                        <TreeSelect
+                            showSearch
+                            style={{
+                                width: 380,
+                            }}
+                            placeholder="Search to Select"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
+                            treeData={treeData} />
 
-
-                        ]}
-                        pagination={{
-                            pageSize: 5, // Số lượng hàng trên mỗi trang
-                        }}
-                    />
-
-
+                    </Form.Item>
 
                 </Form>
             </Modal >

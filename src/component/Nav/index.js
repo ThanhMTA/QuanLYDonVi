@@ -41,8 +41,11 @@ const items = [
         getItem('Cấp phát', '/cap_phat', '5'),
     ]),
     getItem('Kế hoạch huấn luyện', null, 'sub5', <SnippetsOutlined />, [
-        getItem('Option 9', '/home', '9'),
-        getItem('Option 10', '/home', '10'),
+        getItem('Kế hoạch HL', '/khhl', '9'),
+        getItem('LichHL', '/lich', '10'),
+        getItem('Chuyên Cần', '/chuyencan', '10'),
+
+
     ]),
 ];
 // const [selectedSidebarIndex, setSelectedSidebarIndex] = useState(null);
