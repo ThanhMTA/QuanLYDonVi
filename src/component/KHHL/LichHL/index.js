@@ -139,7 +139,7 @@ const LICHHL = () => {
     const handleEditButtonClick = async () => {
         try {
             const formData = form.getFieldsValue(); // Lấy giá trị từ form
-
+            console.log('ghoidsgj', formData)
             setLoading(true);
 
             const response = await fetch(`https://localhost:44325/api/LICHHL/${formData.id}`, {
@@ -547,7 +547,7 @@ const LICHHL = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item label="Tổng tiết học" name="tongtiethoc" rules={[{ required: true }]}>
-                        <Input  disabled/>
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item label="KHHL" name="khhl" rules={[{ required: true }]}>
                         <Select

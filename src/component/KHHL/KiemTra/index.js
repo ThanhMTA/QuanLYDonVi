@@ -95,12 +95,17 @@ const Diem = () => {
     };
     const fetchHVHLData = async (id) => {
         try {
-            const response = await fetch(`https://localhost:44325/api/DVHL/Filter/${id}`);
+            const response = await fetch(`https://localhost:44325/api/Diem/${selected}/${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
             setHocVienData(data);
+            console.log('ghdshg', hocVienData)
+            console.log('ghdshg', selected)
+            console.log('ghdshg', id)
+
+
         } catch (error) {
             console.error('There was a problem fetching the data: ', error);
         }
@@ -126,6 +131,7 @@ const Diem = () => {
     const handleSelectChangeHV = (value) => {
         // Assuming value is the selected ID from the Select component
         fetchHVHLData(value);
+        setSelectedDV(value);
 
     }
 
@@ -139,7 +145,7 @@ const Diem = () => {
 
             setLoading(true);
 
-            const response = await fetch(`https://localhost:44325/api/HocVien/${formData.id}`, {
+            const response = await fetch("https://localhost:44325/api/Diem", {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -149,14 +155,12 @@ const Diem = () => {
 
             if (response.ok) {
                 console.log('Thông tin đã được cập nhật');
-                // Xử lý khi sửa thành công
-
-                // Gọi lại API để lấy danh sách đơn vị mới
-                const updatedResponse = await fetch('https://localhost:44325/api/HocVien');
+                const updatedResponse = fetchHVHLData(selectedDV);
                 const updatedData = await updatedResponse.json();
-
-                // Cập nhật state loaiTBData với dữ liệu mới
                 setHocVienData(updatedData);
+                setLoading(false);
+                setOpen(false);
+
             } else {
                 console.error('Có lỗi khi cập nhật thông tin');
                 // Xử lý khi có lỗi từ phía server
@@ -224,14 +228,8 @@ const Diem = () => {
     };
     const showEditModal = (record) => {
         form.setFieldsValue({
-            id: record.id,
-            ten: record.ten,
-            ngaysinh: record.ngaysinh, // Sử dụng ngày sinh đã định dạng
-            quequan: record.quequan,
-            capBac: record.capBac,
-            sdt: record.sdt,
-            cccd: record.cccd,
-            donVi: record.donVi
+            hocVienId: record.id,
+            khhlid: selected
         }); // Đặt giá trị của các trường trong form bằng thông tin từ record
         setOpen(true); // Hiển thị Modal
     };
@@ -448,7 +446,8 @@ const Diem = () => {
                                             capBac: dv.capBac,
                                             sdt: dv.sdt,
                                             cccd: dv.cccd,
-                                            donVi: dv.donVi
+                                            donVi: dv.donVi,
+                                            diem: dv.diem
                                             // Join tags if it's an array
                                         }))}
                                         columns={[
@@ -484,15 +483,9 @@ const Diem = () => {
 
                                             },
                                             {
-                                                title: 'Đơn vị',
-                                                dataIndex: 'donVi',
-                                                key: 'donVi',
-
-                                            },
-                                            {
                                                 title: 'Điểm',
-                                                dataIndex: 'Diem',
-                                                key: 'Diem',
+                                                dataIndex: 'diem',
+                                                key: 'diem',
 
                                             },
                                             {
@@ -561,7 +554,7 @@ const Diem = () => {
                                                 dataIndex: 'donVi',
                                                 key: 'donVi'
                                             },
-                                           
+
                                         ]}
                                     />
 
@@ -595,7 +588,7 @@ const Diem = () => {
                     <Button key="huy" onClick={handleCancel}>
                         Hủy
                     </Button>,
-            
+
                     <Button key="sua" type="primary" loading={loading} onClick={handleEditButtonClick}>
                         Sửa
                     </Button>
@@ -612,56 +605,16 @@ const Diem = () => {
                     colon={false}
                 >
 
-                    <Form.Item label="ID" name="id" rules={[{ required: true }]}  >
+                    <Form.Item label="HV" name="hocVienId" rules={[{ required: true }]}  >
                         <Input disabled />
                     </Form.Item>
-                    <Form.Item label="Họ tên" name="ten" rules={[{ required: true }]}  >
-                        <Input  disabled/>
-                    </Form.Item>
-                    <Form.Item label="Ngày sinh" name="ngaysinh" rules={[{ required: true }]}>
-                        <DatePicker format={'YYYY/MM/DD'}
-                            style={{
-                                width: 380,
-                            }} 
+                    <Form.Item label="khhl" name="khhlid" rules={[{ required: true }]}>
+                        <Input
                             disabled
-                            />
-                    </Form.Item>
-                    <Form.Item label="Quê quán" name="quequan" rules={[{ required: true }]}>
-                        <Input 
-                        disabled
                         />
                     </Form.Item>
-                    <Form.Item label="Cấp bậc" name="capBac" rules={[{ required: true }]}>
-                        <Input 
-                        disabled/>
-                    </Form.Item>
-
-                    <Form.Item label="SĐT" name="sdt" rules={[{ required: true }]}>
-                        <Input disabled/>
-                    </Form.Item>
-                    <Form.Item label="CCCD" name="cccd" rules={[{ required: true }]}>
-                        <Input disabled />
-                    </Form.Item>
-
-                    <Form.Item label="Đơn vị" name="donVi" rules={[{ required: true }]}>
-                        <TreeSelect
-                            showSearch
-                            style={{
-                                width: 380,
-                            }}
-                            placeholder="Search to Select"
-                            optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-                            treeData={treeData}
-                            disabled
-                             />
-
-                    </Form.Item>
-                    <Form.Item label="Điểm" name="Diem" rules={[{ required: true }]}>
-                        <Input  />
+                    <Form.Item label="Điểm" name="diem1" rules={[{ required: true }]}>
+                        <Input />
                     </Form.Item>
 
                 </Form>

@@ -136,6 +136,8 @@ const HocVienHL = () => {
     const handleAddButtonClick = async () => {
         try {
             const formData = form.getFieldsValue();
+            console.log('hgkfdjg', formData)
+
             setLoading(true);
 
             const response = await fetch('https://localhost:44325/api/DVHL', {
@@ -145,7 +147,7 @@ const HocVienHL = () => {
                 },
                 body: JSON.stringify(formData)
             });
-            const updatedResponse = fetchDVHLData(formData.khhl);
+            const updatedResponse = fetchDVHLData(formData.idKhhl);
             const updatedData = await updatedResponse.json();
             setDVHLData(updatedData);
             setLoading(false);
@@ -543,7 +545,7 @@ const HocVienHL = () => {
                                                 render: (_, record) => (
                                                     <Space size="middle">
 
-                                                        <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.id)} />
+                                                        <DeleteTwoTone onClick={() => handleDeleteButtonClick(record.donVi)} />
 
                                                     </Space>
                                                 ),
@@ -588,7 +590,7 @@ const HocVienHL = () => {
                 ]}
             >
                 <Form form={form} layout="vertical">
-                    <Form.Item label="khhl" name="khhl">
+                    <Form.Item label="khhl" name="idKhhl">
                         <Select
                             showSearch
                             placeholder="Search to Select"
@@ -604,7 +606,7 @@ const HocVienHL = () => {
                             }))}
                             // style={{ width: 380 }}
                             value={selected}
-                            disabled
+                        // disabled
                         />
                     </Form.Item>
                     <Form.Item label="Đơn vị" name="donVi">
