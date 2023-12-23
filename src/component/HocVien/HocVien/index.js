@@ -450,11 +450,6 @@ const HocVien = () => {
 
                                     style={{ width: 300 }}
                                 />
-
-
-
-
-
                                 <Search placeholder="input search text" onSearch={onSearch} enterButton
                                 />
                                 <Button type="primary" size='middle' onClick={showModal}>

@@ -16,6 +16,9 @@ import LICHHL from './component/KHHL/LichHL';
 import HocVienHL from './component/KHHL/HocVien';
 import ChuyenCan from './component/KHHL/ChuyenCan';
 import Diem from './component/KHHL/KiemTra';
+import DiemDanh from './component/KHHL/ChuyenCan';
+import Dashboard from './component/Home';
+import TaiKhoan from './component/TaiKhoan';
 
 import { BrowserRouter as Router, Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 function App() {
@@ -40,10 +43,12 @@ function App() {
             <Route path="/khhl" element={<KHHL />} />
             <Route path="/lich" element={<LICHHL />} />
             <Route path="/khhl/lich/:id" element={<LICHHL />} />
+            <Route path="/lich/diemdanh/:id" element={<DiemDanh />} />
             <Route path="/donvi_thuchien" element={<HocVienHL />} />
             <Route path="/chuyencan" element={<ChuyenCan />} />
             <Route path="/diem" element={<Diem />} />
-
+            <Route path="/home" element={<Dashboard />} />
+            <Route path="/taiKhoan" element={<TaiKhoan />} />
           </Routes>
         </BrowserRouter>
 

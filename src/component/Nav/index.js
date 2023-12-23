@@ -10,7 +10,8 @@ import {
     ContactsOutlined,
     SnippetsOutlined,
     ToolOutlined,
-    BellOutlined
+   BellOutlined
+   
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme, Button, Avatar, Space, Badge } from 'antd';
 import './index.css'
@@ -40,7 +41,7 @@ const items = [
         getItem('Thiết bị', '/thiet_bi', '4'),
         getItem('Cấp phát', '/cap_phat', '5'),
     ]),
-    getItem('Kế hoạch huấn luyện', null, 'sub5', <SnippetsOutlined />, [
+    getItem('Kế hoạch HL', null, 'sub5', <SnippetsOutlined />, [
         getItem('Kế hoạch HL', '/khhl', '9'),
         getItem('LichHL', '/lich', '10'),
         getItem('Điểm', '/diem', '11'),
@@ -49,6 +50,7 @@ const items = [
 
 
     ]),
+    getItem('QL tài khoản ', '/taiKhoan', 'sub7', <UserOutlined />),
 ];
 // const [selectedSidebarIndex, setSelectedSidebarIndex] = useState(null);
 

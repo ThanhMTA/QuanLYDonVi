@@ -138,7 +138,7 @@ const KHHL = () => {
     const handleEditButtonClick = async () => {
         try {
             const formData = form.getFieldsValue(); // Lấy giá trị từ form
-
+            console.log('jhfk_kjg', formData)
             setLoading(true);
 
             const response = await fetch(`https://localhost:44325/api/KHHL/${formData.id}`, {
@@ -261,6 +261,8 @@ const KHHL = () => {
                     }))
 
         }));
+    /// khoach cha con 
+
     const onSelect = (selectedKeys, info) => {
         const selectedId = selectedKeys[0]; // Giả sử ID của đơn vị được chọn là phần tử đầu tiên trong mảng selectedKeys
 
@@ -283,7 +285,6 @@ const KHHL = () => {
             noidung: record.noidung,
             tgbatdau: record.tgbatdau,
             tgketthuc: record.tgketthuc,
-            tongtiethoc: record.tongtiethoc,
             ngaylap: record.ngaylap,
             maKhhl: record.maKhhl,
             donVi: record.donVi
@@ -454,6 +455,7 @@ const KHHL = () => {
 
 
 
+
                                 <Search placeholder="input search text" onSearch={onSearch} enterButton
                                 />
                                 <Button type="primary" size='middle' onClick={showModal}>
@@ -480,7 +482,9 @@ const KHHL = () => {
                             tongtiethoc: dv.tongtiethoc,
                             ngaylap: moment(dv.ngaylap),
                             maKhhl: dv.maKhhl,
-                            donVi: dv.donVi
+                            donVi: dv.donVi,
+                            tongnbuoihoc: dv.tongnbuoihoc,
+                            khcha: dv.khcha
                             // Join tags if it's an array
                         }))}
                         columns={[
@@ -532,6 +536,12 @@ const KHHL = () => {
 
                             },
                             {
+                                title: 'Tổng buổi học',
+                                dataIndex: 'tongnbuoihoc',
+                                key: 'tongnbuoihoc',
+
+                            },
+                            {
                                 title: 'Đơn vị lập',
                                 dataIndex: 'donVi',
                                 key: 'donVi',
@@ -546,6 +556,13 @@ const KHHL = () => {
                                         {moment(record.ngaylap).format('DD/MM/YYYY')}
                                     </span>
                                 ),
+
+                            },
+                            {
+                                title: 'Kế hoạch cấp trên',
+                                dataIndex: 'khcha',
+                                key: 'khcha',
+
 
                             },
                             {
@@ -630,9 +647,6 @@ const KHHL = () => {
                                 width: 380,
                             }} />
                     </Form.Item>
-                    <Form.Item label="Tổng tiết học" name="tongtiethoc" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
                     <Form.Item label="Ngày lập " name="ngaylap" rules={[{ required: true }]}>
                         <DatePicker format={'YYYY/MM/DD'}
                             style={{
@@ -655,7 +669,40 @@ const KHHL = () => {
                             treeData={treeData} />
 
                     </Form.Item>
+                    {/* <Form.Item label="Chọn Cấp trên" name="donViCha" rules={[{ required: true }]}>
+                        <TreeSelect
+                            showSearch
+                            style={{
+                                width: 380,
+                            }}
+                            placeholder="Search to Select"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            onSelect={onSelect}
+                            treeData={treeData} />
 
+
+
+                    </Form.Item> */}
+                    <Form.Item label="kế hoạch cấp trên" name="khcha" rules={[{ required: true }]}>
+                        <Select
+                            showSearch
+                            placeholder="Search to Select"
+                            optionFilterProp="children"
+                            // onChange={onSelectLoaiTB}
+                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            }
+                            options={kHHLData.map(item => ({
+                                value: item.noidung, // Assuming your API response has 'value' and 'label' fields
+                                label: item.noidung,
+                            }))}
+                        />
+                    </Form.Item>
                 </Form>
             </Modal >
 
